@@ -1,5 +1,4 @@
 terraform {
   backend "http" {
-    
   }
 }
