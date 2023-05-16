@@ -1,7 +1,7 @@
 
 ## Gateway Software Quickstart
 
-1. Setup env in project root folder
+1. Setup env
 
 ```sh
 cp example.env .env
