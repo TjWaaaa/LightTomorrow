@@ -70,13 +70,13 @@ resource "aws_iot_policy" "policy" {
           "iot:Receive",
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:topic/$aws/things/$${iot:Connection.Thing.ThingName}/*"
+        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:topic/things/$${iot:Connection.Thing.ThingName}/*"
         }, {
         Action = [
           "iot:Subscribe",
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:topicfilter/$aws/things/$${iot:Connection.Thing.ThingName}/*"
+        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:topicfilter/things/$${iot:Connection.Thing.ThingName}/*"
       }
     ]
   })
