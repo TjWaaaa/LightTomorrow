@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@iotee/node-iotee": "git+https://gitlab.mi.hdm-stuttgart.de/iotee/node-iotee.git",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "mqtt": "^4.3.7"
   }
 }
