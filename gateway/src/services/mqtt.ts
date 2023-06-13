@@ -31,12 +31,6 @@ export class MqttService {
 
     this.client = mqtt.connect(url.toString(), options);
 
-    this.client.on("disconnect", (packet) => console.log("packet", packet));
-    this.client.on("close", () => console.log("close"));
-    this.client.on("error", (err) => {
-      console.error(`Failed to connect to ${this.config.host}: ${err}`);
-    });
-
     await new Promise((resolve, reject) => {
       if (!this.client) return reject("Client not initialized");
 
@@ -53,7 +47,6 @@ export class MqttService {
   }
 
   publish(topic: string, message: string): void {
-    console.log("publish", topic, message);
     if (!this.client) {
       console.error("Must connect to MQTT broker before publishing message");
       return;
@@ -64,8 +57,10 @@ export class MqttService {
     });
   }
 
-  subscribe(topic: string, callback: (payload: string) => void): void {
-    console.log("subscribe", topic, callback);
+  subscribe(
+    topic: string,
+    callback: (payload: string, topic: string) => void
+  ): void {
     if (!this.client) {
       console.error("Must connect to MQTT broker before subscribing to topic");
       return;
@@ -76,7 +71,7 @@ export class MqttService {
     });
 
     this.client.on("message", (topic, payload) => {
-      callback(payload.toString());
+      callback(payload.toString(), topic);
     });
   }
 
