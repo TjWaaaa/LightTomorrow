@@ -10,18 +10,17 @@ resource "aws_iot_topic_rule" "rule" {
   iot_events {
     input_name = "test"
     # message_id = "${newuuid()}"
-    role_arn   = aws_iam_role.role.arn
+    role_arn = aws_iam_role.role.arn
 
     # target_arn     = aws_sns_topic.mytopic.arn
   }
 
   error_action {
-    iot_events {
-      input_name = "test"
-    #   message_id = "${newuuid()}"
-      role_arn   = aws_iam_role.role.arn
-
+    republish {
+      role_arn = aws_iam_role.role.arn
+      topic = "topic/error"
     }
+    
   }
 }
 
@@ -38,7 +37,29 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
+resource "aws_iam_policy" "iot_events_policy" {
+  name = "iot_events_policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "iotevents:BatchPutMessage",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role" "role" {
   name               = "exampleRole"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "my_policy_attachment" {
+  role       = aws_iam_role.role.name
+  policy_arn = aws_iam_policy.iot_events_policy.arn
 }

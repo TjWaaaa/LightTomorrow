@@ -1,0 +1,73 @@
+{
+  "Description": "Simple Detector Model Template",
+  "Resources": {
+    "MyDetectorModel": {
+      "Type": "AWS::IoTEvents::DetectorModel",
+      "Properties": {
+        "DetectorModelDefinition": {
+          "States": [
+            {
+              "StateName": "Device_idle",
+              "OnInput": {
+                "Events": [
+                  {
+                    "EventName": "testForward",
+                    "Condition": "$input.test.brightness",
+                    "Actions": [
+                      {
+                        "IotTopicPublish": {
+                          "MqttTopic": "my/message"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "TransitionEvents": []
+              },
+              "OnEnter": {
+                "Events": [
+                  {
+                    "EventName": "testForward",
+                    "Condition": "true",
+                    "Actions": [
+                      {
+                        "IotTopicPublish": {
+                          "MqttTopic": "my/topic",
+                          "Payload": {
+                            "ContentExpression": "\"passtm\"",
+                            "Type": "STRING"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "OnExit": {
+                "Events": [
+                  {
+                    "EventName": "OnExitTest",
+                    "Condition": "true",
+                    "Actions": [
+                      {
+                        "IotTopicPublish": {
+                          "MqttTopic": "my/topic"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "InitialStateName": "Device_idle"
+        },
+        "DetectorModelDescription": "This model uses inputs both from sensors and a software application. Sensor input would give speed and device_id.",
+        "DetectorModelName": "TimoTest",
+        "EvaluationMethod": "SERIAL",
+        "Key": "device_id",
+        "RoleArn": "arn:aws:iam::689988310164:role/service-role/TestRole"
+      }
+    }
+  }
+}
