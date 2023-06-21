@@ -18,9 +18,9 @@ resource "aws_iot_topic_rule" "rule" {
   error_action {
     republish {
       role_arn = aws_iam_role.role.arn
-      topic = "topic/error"
+      topic    = "topic/error"
     }
-    
+
   }
 }
 
