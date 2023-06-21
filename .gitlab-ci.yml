@@ -1,6 +1,2 @@
-terraform-ci:
-  variables:
-  TF_ROOT: ./infrastructure
-
-  include:
-    - template: Terraform.latest.gitlab-ci.yml
+include:
+  - template: Terraform.latest.gitlab-ci.yml
