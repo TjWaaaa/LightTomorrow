@@ -16,6 +16,13 @@ export class RoomSensorService {
         console.log("result:", result);
     
         await this.config.iotee.setDisplay("current Proximity: \n" + result.toString());
+
+        const topic = "thing/room-sensor/" + this.config.deviceID;
+        const message = JSON.stringify({
+            proximity: result,
+        });
+
+        this.config.mqttService.publish(topic, message);
       }
     
       setInterval(run, 1000);

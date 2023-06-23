@@ -9,8 +9,8 @@ export interface LightActuatorConfig {
 
 export class LightActuatorService {
     constructor(private config: LightActuatorConfig) {
-
         let lightOn = false;
+
         this.config.iotee.on(ReceiveEvents.ButtonPressed, async (payload) => {
             console.log("Button pressed:", payload)
             switch (payload[0]) {
@@ -22,9 +22,12 @@ export class LightActuatorService {
                     console.log("No Function")
             }
             await this.config.iotee.setDisplay("Light: " + lightOn.toString());
+        });
 
-        }
-        );
+        const topic = "thing/light-actuator/" + this.config.deviceID;
+        const message = JSON.stringify({
+            lightOn: lightOn,
+        });
 
         console.log("result:", lightOn);
 
