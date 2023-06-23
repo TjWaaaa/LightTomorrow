@@ -1,15 +1,7 @@
 import * as mqtt from "mqtt";
 import * as fs from "fs";
 import { URL } from "url";
-
-export interface MqttConfig {
-  host: string;
-  port: number;
-  caPath: string;
-  certPath: string;
-  keyPath: string;
-  clientId: string;
-}
+import { MqttConfig } from "../interfaces";
 
 export class MqttService {
   private client: mqtt.MqttClient | undefined;
