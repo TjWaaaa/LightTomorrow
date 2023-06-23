@@ -44,25 +44,9 @@ resource "aws_iot_policy" "policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = [
-          "iot:Connect",
-        ]
+        Action   = ["iot:*"]
         Effect   = "Allow"
-        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:client/$${iot:Connection.Thing.ThingName}"
-      },
-      {
-        Action = [
-          "iot:Publish",
-          "iot:Receive",
-        ]
-        Effect   = "Allow"
-        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:topic/*"
-        }, {
-        Action = [
-          "iot:Subscribe",
-        ]
-        Effect   = "Allow"
-        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:topicfilter/*"
+        Resource = ["*"]
       }
     ]
   })
