@@ -25,26 +25,7 @@ export class RoomSensorService {
         this.mode = Mode.AUTO;
         this.currentProximityLevel = 0;
 
-        const run = async () => {
-            if (this.mode === Mode.AUTO) {
-                this.currentProximityLevel = await this.config.iotee.getProximity();
-            }
-
-            console.log("result:", this.currentProximityLevel.toFixed(2));
-
-            await this.config.iotee.setDisplay(
-                "Proximity Level: \n" + this.currentProximityLevel.toFixed(2) + "\n" + "Mode: " + ModeDisplay[this.mode] + "\n" + "A: switch mode \n" + "X: increase level \n" + "Y: decrease level"
-            );
-
-            const topic = "thing/light-sensor/" + this.config.deviceID;
-            const message = JSON.stringify({
-                proximityLevel: this.currentProximityLevel.toFixed(2),
-            });
-
-            this.config.mqttService.publish(topic, message);
-        }
-
-        setInterval(run, 1000);
+        setInterval(this.run.bind(this), 1000)
 
         this.config.iotee.on(ReceiveEvents.ButtonPressed, async (payload) => {
             console.log("Button pressed:", payload)
@@ -70,6 +51,25 @@ export class RoomSensorService {
             }
         }
         );
+    }
+
+    async run() {
+        if (this.mode === Mode.AUTO) {
+            this.currentProximityLevel = await this.config.iotee.getProximity();
+        }
+
+        console.log("result:", this.currentProximityLevel.toFixed(2));
+
+        await this.config.iotee.setDisplay(
+            "Proximity Level: \n" + this.currentProximityLevel.toFixed(2) + "\n" + "Mode: " + ModeDisplay[this.mode] + "\n" + "A: switch mode \n" + "X: increase level \n" + "Y: decrease level"
+        );
+
+        const topic = "thing/light-sensor/" + this.config.deviceID;
+        const message = JSON.stringify({
+            proximityLevel: this.currentProximityLevel.toFixed(2),
+        });
+
+        this.config.mqttService.publish(topic, message);
     }
 
 }

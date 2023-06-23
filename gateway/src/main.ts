@@ -14,13 +14,17 @@ enum DeviceType {
   ProximitySensor = "ProximitySensor"
 }
 
+const deviceType = {
+  [DeviceType.LightSensor]: LightSensorService,
+  [DeviceType.LightActuator]: LightActuatorService,
+  [DeviceType.ProximitySensor]: RoomSensorService
+}
+
 const main = async () => {
   console.log(process.env.DEVICE_URL);
   const iotee = new Iotee(process.env.DEVICE_URL!);
-  let counter = 50;
 
   iotee.setLogLevel(LogLevel.WARN); // Set the verbosity of the API
-
   await iotee.connect();
 
   const mqttConfig: MqttConfig = {
@@ -36,43 +40,7 @@ const main = async () => {
   //await mqttService.connect();
 
   // Do your commands here
-  switch (process.env.DEVICE_TYPE) {
-    case DeviceType.LightSensor:
-      new LightSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
-      break;
-    case DeviceType.LightActuator:
-      new LightActuatorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
-      break;
-    case DeviceType.ProximitySensor:
-      new RoomSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
-      break;
-    default:
-      console.log("failed")
-  }
-  //new LightSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
-
-  //new LightActuatorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
-
-  //new RoomSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
-
-  // iotee.on(ReceiveEvents.ButtonPressed, async (payload) => {
-  //   console.log("Button pressed:", payload)
-  //   switch (payload[0]) {
-  //     case 'A':
-  //       counter++; break;
-  //     case 'B':
-  //       counter++; break;
-  //     case 'X':
-  //       counter--; break;
-  //     case 'Y':
-  //       counter--; break;
-  //     default:
-  //       console.log("failed")
-  //   }
-  //   await iotee.setDisplay("current light level: " + counter.toString());
-
-  // }
-  // );
+  new deviceType[process.env.DEVICE_TYPE as DeviceType]({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
 };
 
 main()
