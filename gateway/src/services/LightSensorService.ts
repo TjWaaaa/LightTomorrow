@@ -15,7 +15,7 @@ export enum Mode {
 const ModeDisplay: { [key in Mode]: string } = {
     [Mode.AUTO]: "AUTO",
     [Mode.MANUAL]: "MANUAL",
-  };
+};
 
 export class LightSensorService {
     private mode: Mode;
@@ -33,7 +33,7 @@ export class LightSensorService {
             console.log("result:", this.currentLightLevel.toFixed(2));
 
             await this.config.iotee.setDisplay(
-                "Light Level: \n" + this.currentLightLevel.toFixed(2) + "\n" + "Mode: " + ModeDisplay[this.mode] + "\n" + "A: switch mode \n" + "X: increase light level \n" + "Y: decrease light level"
+                "Light Level: \n" + this.currentLightLevel.toFixed(2) + "\n" + "Mode: " + ModeDisplay[this.mode] + "\n" + "A: switch mode \n" + "X: increase level \n" + "Y: decrease level"
             );
 
             const topic = "thing/light-sensor/" + this.config.deviceID;
