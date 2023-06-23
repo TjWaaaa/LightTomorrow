@@ -1,10 +1,18 @@
 import { Iotee, LogLevel, ReceiveEvents } from "@iotee/node-iotee";
 import { config } from "dotenv";
 import { MqttConfig, MqttService } from "./services/mqtt";
-import { LightSensorService } from "./services/LightSensorService";
+import { LightSensorService } from "./services/lightSensorService";
+import { LightActuatorService } from "./services/lightActuatorService";
+import { RoomSensorService } from "./services/proximitySensorService";
 
 // Read .env variables
 config();
+
+enum DeviceType {
+  LightSensor = "LightSensor",
+  LightActuator = "LightActuator",
+  ProximitySensor = "ProximitySensor"
+}
 
 const main = async () => {
   console.log(process.env.DEVICE_URL);
@@ -28,8 +36,24 @@ const main = async () => {
   //await mqttService.connect();
 
   // Do your commands here
+  switch (process.env.DEVICE_TYPE) {
+    case DeviceType.LightSensor:
+      new LightSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
+      break;
+    case DeviceType.LightActuator:
+      new LightActuatorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
+      break;
+    case DeviceType.ProximitySensor:
+      new RoomSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
+      break;
+    default:
+      console.log("failed")
+  }
+  //new LightSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
 
-  new LightSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
+  //new LightActuatorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
+
+  //new RoomSensorService({ iotee: iotee, mqttService: mqttService, deviceID: process.env.DEVICE_ID! });
 
   // iotee.on(ReceiveEvents.ButtonPressed, async (payload) => {
   //   console.log("Button pressed:", payload)
