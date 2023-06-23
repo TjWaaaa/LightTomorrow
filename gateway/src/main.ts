@@ -1,7 +1,7 @@
 import { Iotee, LogLevel, ReceiveEvents } from "@iotee/node-iotee";
 import { config } from "dotenv";
 import { MqttConfig, MqttService } from "./services/mqtt";
-import { LightSensorService } from "./services/LightSensorService";
+import { LightSensorService } from "./services/lightSensorService";
 
 // Read .env variables
 config();
