@@ -81,7 +81,7 @@ data "http" "root_ca" {
   url = "https://www.amazontrust.com/repository/AmazonRootCA1.pem"
 }
 
-resource "local_file" "pk" { # Create a "myKey.pem" to your computer!!
+resource "local_file" "pk" {
   content  = tls_private_key.key.private_key_pem
   filename = "../gateway/certs/private.pem.key"
 }
