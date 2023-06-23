@@ -1,7 +1,7 @@
 import { Iotee, LogLevel, ReceiveEvents } from "@iotee/node-iotee";
 import { config } from "dotenv";
 import { MqttConfig, MqttService } from "./services/mqtt";
-import { LightSensorService } from "./services/lightSensorService";
+import { LightSensorService } from "./services/LightSensorService";
 
 // Read .env variables
 config();
@@ -25,7 +25,7 @@ const main = async () => {
   };
 
   const mqttService = new MqttService(mqttConfig);
-  //mqttService.connect();
+  //await mqttService.connect();
 
   // Do your commands here
 
