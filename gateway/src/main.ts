@@ -1,52 +1,46 @@
-import { Iotee, LogLevel } from "@iotee/node-iotee";
+import { Iotee, LogLevel, ReceiveEvents } from "@iotee/node-iotee";
 import { config } from "dotenv";
-import { MqttConfig, MqttService } from "./services/mqtt";
+import { MqttService } from "./services/mqtt";
+import { LightActuatorService } from "./services/actuatorService";
+import { Mqtt } from "./interfaces";
+import { LightSensorService } from "./services/sensor/lightSensorService";
+import { ProximitySensorService } from "./services/sensor/proximitySensorService";
 
-// Read .env variables
 config();
 
+enum DeviceType {
+  LightSensor = "LightSensor",
+  LightActuator = "LightActuator",
+  ProximitySensor = "ProximitySensor",
+}
+
+const deviceType = {
+  [DeviceType.LightSensor]: LightSensorService,
+  [DeviceType.LightActuator]: LightActuatorService,
+  [DeviceType.ProximitySensor]: ProximitySensorService,
+};
+
 const main = async () => {
+  console.log(process.env.DEVICE_URL);
   const iotee = new Iotee(process.env.DEVICE_URL!);
 
-  iotee.setLogLevel(LogLevel.WARN); // Set the verbosity of the API
-
+  iotee.setLogLevel(LogLevel.WARN);
   await iotee.connect();
 
-  // Do your commands here
-};
-
-// main()
-//   .then(() => {})
-//   .catch((err) => console.error(err));
-
-const mqttAwsTesting = async () => {
-  const config: MqttConfig = {
+  const mqttConfig: Mqtt = {
     host: "a2scw8p2blnw89-ats.iot.eu-central-1.amazonaws.com",
     port: 8883,
-    caPath: "./certs/root-CA.crt",
-    certPath: "./certs/certificate.pem.crt",
-    keyPath: "./certs/private.pem.key",
-    clientId: "thing_ae3be5a7922dee37",
+    caPath: process.env.CA_PATH!,
+    certPath: process.env.CERT_PATH!,
+    keyPath: process.env.KEY_PATH!,
+    clientId: process.env.DEVICE_ID!,
   };
 
-  const mqttService = new MqttService(config);
+  const mqttService = new MqttService(mqttConfig);
+  //await mqttService.connect();
 
-  mqttService
-    .connect()
-    .then(() => {
-      mqttService.subscribe("my/topic", (message) => {
-        console.log(`Received message on my/topic: ${message}`);
-      });
-    })
-    .catch((err) => {
-      console.error(`Failed to connect: ${err}`);
-    });
-
-  // Clean up and disconnect MQTT connection before application exit
-  process.on("SIGINT", function () {
-    mqttService.disconnect();
-    process.exit();
-  });
+  new deviceType[process.env.DEVICE_TYPE as DeviceType](iotee, mqttService);
 };
 
-mqttAwsTesting();
+main()
+  .catch((err) => console.error(err));
