@@ -5,11 +5,6 @@ resource "random_id" "id" {
 resource "aws_iot_thing" "thing" {
   name = "thing_${random_id.id.hex}"
 }
-
-output "thing_name" {
-  value = aws_iot_thing.thing.name
-}
-
 resource "tls_private_key" "key" {
   algorithm = "RSA"
   rsa_bits  = 2048
@@ -38,15 +33,6 @@ resource "aws_iot_thing_principal_attachment" "attachment" {
   thing     = aws_iot_thing.thing.name
 }
 
-output "cert" {
-  value = tls_self_signed_cert.cert.cert_pem
-}
-
-output "key" {
-  value     = tls_private_key.key.private_key_pem
-  sensitive = true
-}
-
 data "aws_arn" "thing" {
   arn = aws_iot_thing.thing.arn
 }
@@ -58,25 +44,9 @@ resource "aws_iot_policy" "policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = [
-          "iot:Connect",
-        ]
+        Action   = ["iot:*"]
         Effect   = "Allow"
-        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:client/$${iot:Connection.Thing.ThingName}"
-      },
-      {
-        Action = [
-          "iot:Publish",
-          "iot:Receive",
-        ]
-        Effect   = "Allow"
-        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:topic/*"
-        }, {
-        Action = [
-          "iot:Subscribe",
-        ]
-        Effect   = "Allow"
-        Resource = "arn:aws:iot:${data.aws_arn.thing.region}:${data.aws_arn.thing.account}:topicfilter/*"
+        Resource = ["*"]
       }
     ]
   })
@@ -91,14 +61,19 @@ data "aws_iot_endpoint" "iot_endpoint" {
   endpoint_type = "iot:Data-ATS"
 }
 
-output "iot_endpoint" {
-  value = data.aws_iot_endpoint.iot_endpoint.endpoint_address
-}
-
 data "http" "root_ca" {
   url = "https://www.amazontrust.com/repository/AmazonRootCA1.pem"
 }
 
-output "ca" {
-  value = data.http.root_ca.response_body
+resource "local_file" "pk" {
+  content  = tls_private_key.key.private_key_pem
+  filename = "../gateway/certs/private.pem.key"
+}
+resource "local_file" "client-cert" {
+  content  = tls_self_signed_cert.cert.cert_pem
+  filename = "../gateway/certs/certificate.pem.crt"
+}
+resource "local_file" "ca-cert" {
+  content  = data.http.root_ca.response_body
+  filename = "../gateway/certs/root-CA.crt"
 }

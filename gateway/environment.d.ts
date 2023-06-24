@@ -4,6 +4,7 @@ declare global {
             DEVICE_URL: string;
             DEVICE_TYPE: string;
             DEVICE_ID: string;
+            SENSOR_INTERVAL: string;
             CA_PATH: string;
             CERT_PATH: string;
             KEY_PATH: string;

@@ -1,20 +1,12 @@
 import * as mqtt from "mqtt";
 import * as fs from "fs";
 import { URL } from "url";
-
-export interface MqttConfig {
-  host: string;
-  port: number;
-  caPath: string;
-  certPath: string;
-  keyPath: string;
-  clientId: string;
-}
+import { Mqtt } from "../interfaces";
 
 export class MqttService {
   private client: mqtt.MqttClient | undefined;
 
-  constructor(private config: MqttConfig) {
+  constructor(private config: Mqtt) {
     console.log("Initialized MQTT Service with provided configuration");
   }
 
