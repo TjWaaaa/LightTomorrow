@@ -1,20 +1,12 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
-import { Thing } from "../interfaces";
 import { MqttService } from "./mqtt";
 
 const DEFAULT_IS_LIGHT_ON = false;
 
 export class LightActuatorService {
-  private deviceID: string; // TODO: ensure this is used in topic later or get removed
   private isLightOn: boolean;
-  private iotee: Iotee;
-  private mqttService: MqttService;
 
-  constructor(config: Thing) {
-    this.iotee = config.iotee;
-    this.mqttService = config.mqttService;
-
-    this.deviceID = process.env.DEVICE_ID!;
+  constructor(private iotee: Iotee, private mqttService: MqttService) {
     this.isLightOn = DEFAULT_IS_LIGHT_ON;
 
     this.setup();
