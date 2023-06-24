@@ -1,5 +1,5 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
-import { SensorMode, Thing } from "../../interfaces";
+import { SensorMode } from "../../interfaces";
 import { MqttService } from "../mqtt";
 
 const DEFAULT_INTERVAL = 1000;

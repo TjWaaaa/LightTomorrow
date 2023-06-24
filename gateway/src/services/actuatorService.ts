@@ -1,5 +1,4 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
-import { Thing } from "../interfaces";
 import { MqttService } from "./mqtt";
 
 const DEFAULT_IS_LIGHT_ON = false;
