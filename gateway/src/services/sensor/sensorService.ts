@@ -5,7 +5,7 @@ import { MqttService } from "../mqtt";
 const DEFAULT_INTERVAL = 1000;
 const STEP_SIZE_MANUAL_MODE = 50;
 const INTERVAL = parseInt(process.env.SENSOR_INTERVAL!, DEFAULT_INTERVAL);
-const DEVICE_ID = process.env.DEVICE_ID;
+const DEVICE_ID = process.env.DEVICE_ID!;
 
 export abstract class SensorService {
   protected mode: SensorMode;
