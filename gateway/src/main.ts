@@ -1,7 +1,7 @@
 import { Iotee, LogLevel, ReceiveEvents } from "@iotee/node-iotee";
 import { config } from "dotenv";
 import { MqttService } from "./services/mqtt";
-import { LightActuatorService } from "./services/lightActuatorService";
+import { LightActuatorService } from "./services/actuatorService";
 import { MqttConfig } from "./interfaces";
 import {
   LightSensorService,
