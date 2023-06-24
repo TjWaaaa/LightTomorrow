@@ -4,7 +4,9 @@ import { MqttService } from "../mqtt";
 
 const DEFAULT_INTERVAL = 1000;
 const STEP_SIZE_MANUAL_MODE = 50;
-const INTERVAL = parseInt(process.env.SENSOR_INTERVAL!, DEFAULT_INTERVAL);
+const DEFAULT_MODE = SensorMode.AUTO;
+
+const INTERVAL = parseInt(process.env.SENSOR_INTERVAL!) || DEFAULT_INTERVAL;
 const DEVICE_ID = process.env.DEVICE_ID!;
 
 export abstract class SensorService {
@@ -12,7 +14,7 @@ export abstract class SensorService {
   protected currentValue: number;
 
   constructor(protected iotee: Iotee, protected mqttService: MqttService) {
-    this.mode = SensorMode.AUTO;
+    this.mode = DEFAULT_MODE;
     this.currentValue = 0;
 
     this.setup();
@@ -44,7 +46,7 @@ export abstract class SensorService {
       }
     });
 
-    setInterval(this.run, INTERVAL);
+    setInterval(this.run.bind(this), INTERVAL);
   }
 
   async run() {
@@ -56,15 +58,15 @@ export abstract class SensorService {
 
     await this.iotee.setDisplay(
       this.getThingLabel() +
-        "\n" +
-        this.currentValue.toFixed(2) +
-        "\n" +
-        "Mode: " +
-        this.mode +
-        "\n" +
-        "A: switch mode \n" +
-        "X: increase value \n" +
-        "Y: decrease value"
+      "\n" +
+      this.currentValue.toFixed(2) +
+      "\n" +
+      "Mode: " +
+      this.mode +
+      "\n" +
+      "A: switch mode \n" +
+      "X: increase value \n" +
+      "Y: decrease value"
     );
 
     const topic = "thing/" + this.getSensorType() + "/" + DEVICE_ID;
