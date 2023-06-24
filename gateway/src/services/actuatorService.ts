@@ -1,32 +1,42 @@
-import { ReceiveEvents } from "@iotee/node-iotee";
+import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
 import { Thing } from "../interfaces";
+import { MqttService } from "./mqtt";
+
+const DEFAULT_IS_LIGHT_ON = false;
 
 export class LightActuatorService {
-  constructor(private config: Thing) {
-    const deviceID = process.env.DEVICE_ID!;
-    let lightOn = false;
+  private deviceID: string;
+  private isLightOn: boolean;
+  private iotee: Iotee;
+  private mqttService: MqttService;
 
-    if (lightOn) {
-      this.config.iotee.setDisplay("Light Status: \nON");
-    } else {
-      this.config.iotee.setDisplay("Light Status: \nOFF");
-    }
+  constructor(config: Thing) {
+    this.iotee = config.iotee;
+    this.mqttService = config.mqttService;
 
-    this.config.iotee.on(ReceiveEvents.ButtonPressed, async (payload) => {
-      if (lightOn) {
-        lightOn = false;
-        await this.config.iotee.setDisplay("Light Status: \nOFF");
-      } else {
-        lightOn = true;
-        await this.config.iotee.setDisplay("Light Status: \nON");
-      }
+    this.deviceID = process.env.DEVICE_ID;
+    this.isLightOn = DEFAULT_IS_LIGHT_ON;
 
-      const topic = "thing/light-actuator/" + deviceID;
-      const message = JSON.stringify({
-        lightOn: lightOn,
-      });
+    this.setup();
+  }
 
-      console.log("result:", lightOn);
+  async setup() {
+    await this.setDisplayLightStatus();
+
+    this.mqttService.subscribe("topic", (payload, topic) => {
+      this.isLightOn = JSON.parse(payload).lightStatusParse; // This logic will be changed after final terraform
+      this.setDisplayLightStatus();
     });
+
+    this.iotee.on(ReceiveEvents.ButtonPressed, async () => {
+      this.isLightOn = !this.isLightOn;
+      this.setDisplayLightStatus();
+    });
+  }
+
+  private async setDisplayLightStatus() {
+    await this.iotee.setDisplay(
+      `Light Status: \n${this.isLightOn ? "ON" : "OFF"}`
+    );
   }
 }
