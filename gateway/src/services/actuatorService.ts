@@ -6,13 +6,8 @@ const DEFAULT_IS_LIGHT_ON = false;
 
 export class LightActuatorService {
   private isLightOn: boolean;
-  private iotee: Iotee;
-  private mqttService: MqttService;
 
-  constructor(config: Thing) {
-    this.iotee = config.iotee;
-    this.mqttService = config.mqttService;
-
+  constructor(private iotee: Iotee, private mqttService: MqttService) {
     this.isLightOn = DEFAULT_IS_LIGHT_ON;
 
     this.setup();

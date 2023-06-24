@@ -1,6 +1,6 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
-import { SensorMode, Thing } from "../interfaces";
-import { MqttService } from "./mqtt";
+import { SensorMode, Thing } from "../../interfaces";
+import { MqttService } from "../mqtt";
 
 const DEFAULT_INTERVAL = 1000;
 const STEP_SIZE_MANUAL_MODE = 50;
@@ -10,14 +10,10 @@ const DEVICE_ID = process.env.DEVICE_ID;
 export abstract class SensorService {
   protected mode: SensorMode;
   protected currentValue: number;
-  protected iotee: Iotee;
-  protected mqttService: MqttService;
 
-  constructor(config: Thing) {
+  constructor(protected iotee: Iotee, protected mqttService: MqttService) {
     this.mode = SensorMode.AUTO;
     this.currentValue = 0;
-    this.iotee = config.iotee;
-    this.mqttService = config.mqttService;
 
     this.setup();
   }
@@ -82,32 +78,4 @@ export abstract class SensorService {
   protected abstract getSensorValue(): Promise<number>;
   protected abstract getSensorType(): string;
   protected abstract getThingLabel(): string;
-}
-
-export class LightSensorService extends SensorService {
-  protected async getSensorValue(): Promise<number> {
-    return await this.iotee.getLight();
-  }
-
-  protected getSensorType(): string {
-    return "light-sensor";
-  }
-
-  protected getThingLabel(): string {
-    return "Light Level:";
-  }
-}
-
-export class ProximitySensorService extends SensorService {
-  protected async getSensorValue(): Promise<number> {
-    return await this.iotee.getProximity();
-  }
-
-  protected getSensorType(): string {
-    return "proximity-sensor";
-  }
-
-  protected getThingLabel(): string {
-    return "Proximity Level:";
-  }
 }

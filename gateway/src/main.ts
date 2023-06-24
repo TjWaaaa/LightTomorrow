@@ -3,10 +3,8 @@ import { config } from "dotenv";
 import { MqttService } from "./services/mqtt";
 import { LightActuatorService } from "./services/actuatorService";
 import { Mqtt } from "./interfaces";
-import {
-  LightSensorService,
-  ProximitySensorService,
-} from "./services/sensorService";
+import { LightSensorService } from "./services/sensor/lightSensorService";
+import { ProximitySensorService } from "./services/sensor/proximitySensorService";
 
 config();
 
@@ -41,10 +39,7 @@ const main = async () => {
   const mqttService = new MqttService(mqttConfig);
   //await mqttService.connect();
 
-  new deviceType[process.env.DEVICE_TYPE as DeviceType]({
-    iotee: iotee,
-    mqttService: mqttService,
-  });
+  new deviceType[process.env.DEVICE_TYPE as DeviceType](iotee, mqttService);
 };
 
 main()
