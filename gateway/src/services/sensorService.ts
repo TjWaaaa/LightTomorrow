@@ -1,47 +1,29 @@
-import { ReceiveEvents } from "@iotee/node-iotee";
+import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
 import { SensorMode, Thing } from "../interfaces";
+import { MqttService } from "./mqtt";
+
+const DEFAULT_INTERVAL = 1000;
+const STEP_SIZE_MANUAL_MODE = 50;
+const INTERVAL = parseInt(process.env.SENSOR_INTERVAL!, DEFAULT_INTERVAL);
+const DEVICE_ID = process.env.DEVICE_ID;
 
 export abstract class SensorService {
   protected mode: SensorMode;
   protected currentValue: number;
-  protected interval = parseInt(process.env.SENSOR_INTERVAL!, 10);
+  protected iotee: Iotee;
+  protected mqttService: MqttService;
 
-  constructor(protected config: Thing) {
+  constructor(config: Thing) {
     this.mode = SensorMode.AUTO;
     this.currentValue = 0;
-    const deviceID = process.env.DEVICE_ID!;
+    this.iotee = config.iotee;
+    this.mqttService = config.mqttService;
 
-    const run = async () => {
-      if (this.mode === SensorMode.AUTO) {
-        this.currentValue = await this.getSensorValue();
-      }
+    this.setup();
+  }
 
-      console.log("result:", this.currentValue.toFixed(2));
-
-      await this.config.iotee.setDisplay(
-        this.getThingLabel() +
-          "\n" +
-          this.currentValue.toFixed(2) +
-          "\n" +
-          "Mode: " +
-          this.mode +
-          "\n" +
-          "A: switch mode \n" +
-          "X: increase value \n" +
-          "Y: decrease value"
-      );
-
-      const topic = "thing/" + this.getSensorType() + "/" + deviceID;
-      const message = JSON.stringify({
-        sensorValue: this.currentValue.toFixed(2),
-      });
-
-      this.config.mqttService.publish(topic, message);
-    };
-
-    setInterval(run, this.interval);
-
-    this.config.iotee.on(ReceiveEvents.ButtonPressed, async (payload) => {
+  async setup() {
+    this.iotee.on(ReceiveEvents.ButtonPressed, async (payload) => {
       console.log("Button pressed:", payload);
       switch (payload[0]) {
         case "A":
@@ -55,18 +37,46 @@ export abstract class SensorService {
           break;
         case "X":
           if (this.mode === SensorMode.MANUAL) {
-            this.currentValue += 50;
+            this.currentValue += STEP_SIZE_MANUAL_MODE;
           }
           break;
         case "Y":
           if (this.mode === SensorMode.MANUAL) {
-            this.currentValue -= 50;
+            this.currentValue -= STEP_SIZE_MANUAL_MODE;
           }
           break;
-        default:
-          console.log("No Function");
       }
     });
+
+    setInterval(this.run, INTERVAL);
+  }
+
+  async run() {
+    if (this.mode === SensorMode.AUTO) {
+      this.currentValue = await this.getSensorValue();
+    }
+
+    console.log("Current Value:", this.currentValue.toFixed(2));
+
+    await this.iotee.setDisplay(
+      this.getThingLabel() +
+        "\n" +
+        this.currentValue.toFixed(2) +
+        "\n" +
+        "Mode: " +
+        this.mode +
+        "\n" +
+        "A: switch mode \n" +
+        "X: increase value \n" +
+        "Y: decrease value"
+    );
+
+    const topic = "thing/" + this.getSensorType() + "/" + DEVICE_ID;
+
+    const message = JSON.stringify({
+      sensorValue: this.currentValue.toFixed(2),
+    });
+    this.mqttService.publish(topic, message);
   }
 
   protected abstract getSensorValue(): Promise<number>;
@@ -76,7 +86,7 @@ export abstract class SensorService {
 
 export class LightSensorService extends SensorService {
   protected async getSensorValue(): Promise<number> {
-    return await this.config.iotee.getLight();
+    return await this.iotee.getLight();
   }
 
   protected getSensorType(): string {
@@ -90,7 +100,7 @@ export class LightSensorService extends SensorService {
 
 export class ProximitySensorService extends SensorService {
   protected async getSensorValue(): Promise<number> {
-    return await this.config.iotee.getProximity();
+    return await this.iotee.getProximity();
   }
 
   protected getSensorType(): string {
