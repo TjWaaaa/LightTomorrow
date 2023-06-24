@@ -1,4 +1,4 @@
 resource "aws_cloudformation_stack" "network" {
-  name = "detector-model-stack"
-  template_url = "detectorModel.json"
+  name          = "detector-model-stack"
+  template_body = file("LightActuator.json")
 }
