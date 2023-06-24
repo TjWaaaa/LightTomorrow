@@ -7,7 +7,7 @@ resource "aws_iot_topic_rule" "lighLevelRule01" {
 
   iot_events {
     input_name = "lightSensorInput"
-    role_arn = aws_iam_role.eventsRole.arn
+    role_arn   = aws_iam_role.eventsRole.arn
   }
 
   error_action {
@@ -27,7 +27,7 @@ resource "aws_iot_topic_rule" "lighLevelRule02" {
 
   iot_events {
     input_name = "lightSensorInput"
-    role_arn = aws_iam_role.eventsRole.arn
+    role_arn   = aws_iam_role.eventsRole.arn
   }
 
   error_action {
@@ -47,7 +47,7 @@ resource "aws_iot_topic_rule" "proximityRule" {
 
   iot_events {
     input_name = "proximitySensorInput"
-    role_arn = aws_iam_role.eventsRole.arn
+    role_arn   = aws_iam_role.eventsRole.arn
   }
 
   error_action {
