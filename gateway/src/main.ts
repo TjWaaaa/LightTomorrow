@@ -2,7 +2,7 @@ import { Iotee, LogLevel, ReceiveEvents } from "@iotee/node-iotee";
 import { config } from "dotenv";
 import { MqttService } from "./services/mqtt";
 import { LightActuatorService } from "./services/actuatorService";
-import { MqttConfig } from "./interfaces";
+import { Mqtt } from "./interfaces";
 import {
   LightSensorService,
   ProximitySensorService,
@@ -29,7 +29,7 @@ const main = async () => {
   iotee.setLogLevel(LogLevel.WARN);
   await iotee.connect();
 
-  const mqttConfig: MqttConfig = {
+  const mqttConfig: Mqtt = {
     host: "a2scw8p2blnw89-ats.iot.eu-central-1.amazonaws.com",
     port: 8883,
     caPath: process.env.CA_PATH!,

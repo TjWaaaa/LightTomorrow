@@ -1,12 +1,12 @@
 import { ReceiveEvents } from "@iotee/node-iotee";
-import { SensorMode, ThingConfig } from "../interfaces";
+import { SensorMode, Thing } from "../interfaces";
 
 export abstract class SensorService {
   protected mode: SensorMode;
   protected currentValue: number;
   protected interval = parseInt(process.env.SENSOR_INTERVAL!, 10);
 
-  constructor(protected config: ThingConfig) {
+  constructor(protected config: Thing) {
     this.mode = SensorMode.AUTO;
     this.currentValue = 0;
     const deviceID = process.env.DEVICE_ID!;

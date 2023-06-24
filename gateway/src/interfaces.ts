@@ -1,12 +1,12 @@
 import { Iotee } from "@iotee/node-iotee";
 import { MqttService } from "./services/mqtt";
 
-export interface ThingConfig {
+export interface Thing {
   iotee: Iotee;
   mqttService: MqttService;
 }
 
-export interface MqttConfig {
+export interface Mqtt {
   host: string;
   port: number;
   caPath: string;

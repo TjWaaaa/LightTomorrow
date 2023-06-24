@@ -1,8 +1,8 @@
 import { ReceiveEvents } from "@iotee/node-iotee";
-import { ThingConfig } from "../interfaces";
+import { Thing } from "../interfaces";
 
 export class LightActuatorService {
-  constructor(private config: ThingConfig) {
+  constructor(private config: Thing) {
     const deviceID = process.env.DEVICE_ID!;
     let lightOn = false;
 
