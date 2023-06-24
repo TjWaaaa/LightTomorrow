@@ -14,7 +14,7 @@ export class LightActuatorService {
     this.iotee = config.iotee;
     this.mqttService = config.mqttService;
 
-    this.deviceID = process.env.DEVICE_ID;
+    this.deviceID = process.env.DEVICE_ID!;
     this.isLightOn = DEFAULT_IS_LIGHT_ON;
 
     this.setup();
