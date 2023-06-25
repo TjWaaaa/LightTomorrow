@@ -1,8 +1,8 @@
-import { Iotee, LogLevel, ReceiveEvents } from "@iotee/node-iotee";
+import { Iotee, LogLevel } from "@iotee/node-iotee";
 import { config } from "dotenv";
-import { MqttService } from "./services/mqtt";
-import { LightActuatorService } from "./services/actuatorService";
 import { Mqtt } from "./interfaces";
+import { LightActuatorService } from "./services/actuatorService";
+import { MqttService } from "./services/mqtt";
 import { LightSensorService } from "./services/sensor/lightSensorService";
 import { ProximitySensorService } from "./services/sensor/proximitySensorService";
 
@@ -37,7 +37,7 @@ const main = async () => {
   };
 
   const mqttService = new MqttService(mqttConfig);
-  //await mqttService.connect();
+  await mqttService.connect();
 
   new deviceType[process.env.DEVICE_TYPE as DeviceType](iotee, mqttService);
 };

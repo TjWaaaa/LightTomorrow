@@ -1,5 +1,5 @@
-import * as mqtt from "mqtt";
 import * as fs from "fs";
+import * as mqtt from "mqtt";
 import { URL } from "url";
 import { Mqtt } from "../interfaces";
 
