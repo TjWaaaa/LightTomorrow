@@ -12,18 +12,36 @@ resource "aws_cloudformation_stack" "network" {
   template_body = file("detectormodel/LightActuator.json")
 }
 
+resource "aws_iot_thing_type" "sensor" {
+  name = "Sensor"
+
+  properties {
+    description = "Used for the proximity- and light sensor."
+  }
+}
+
+resource "aws_iot_thing_type" "actuator" {
+  name = "Actuator"
+
+  properties {
+    description = "Used for the workplace light actuators."
+  }
+}
+
 module "sensors" {
-  for_each = toset(local.sensors)
-  source   = "./thing"
-  name     = "sensor_${each.key}"
-  policy   = aws_iot_policy.thing_policy
+  for_each   = toset(local.sensors)
+  source     = "./thing"
+  name       = "sensor_${each.key}"
+  thing_type = aws_iot_thing_type.sensor
+  policy     = aws_iot_policy.thing_policy
 }
 
 module "actuators" {
-  for_each = toset(local.actuators)
-  source   = "./thing"
-  name     = "actuator_${each.key}"
-  policy   = aws_iot_policy.thing_policy
+  for_each   = toset(local.actuators)
+  source     = "./thing"
+  name       = "actuator_${each.key}"
+  thing_type = aws_iot_thing_type.actuator
+  policy     = aws_iot_policy.thing_policy
 }
 
 data "aws_iam_policy_document" "thing_policy_doc" {
