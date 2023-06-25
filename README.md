@@ -23,12 +23,14 @@ export AWS_SECRET_ACCESS_KEY=
 terraform apply
 ```
 
-Light Sensor Payload:
+#### Light Sensor Payload:
+
 {
 "lightLevel":
 }
 
-Proximity Sensor Payload
+#### Proximity Sensor Payload
+
 {
 "proximity":
 }
