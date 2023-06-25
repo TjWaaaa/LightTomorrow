@@ -16,6 +16,7 @@ export abstract class SensorService {
   protected mode: SensorMode;
   protected currentValue: number;
   abstract thingLabel: string;
+  abstract payloadKey: string;
 
   constructor(protected iotee: Iotee, protected mqttService: MqttService) {
     this.mode = DEFAULT_MODE;
@@ -66,7 +67,7 @@ export abstract class SensorService {
     const topic = "topic/sensor/" + DEVICE_ID;
 
     const message = JSON.stringify({
-      sensorValue: this.currentValue.toFixed(2),
+      [this.payloadKey]: this.currentValue.toFixed(2),
     });
     this.mqttService.publish(topic, message);
 
