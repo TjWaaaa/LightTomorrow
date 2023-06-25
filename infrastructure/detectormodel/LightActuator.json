@@ -127,7 +127,7 @@
         "DetectorModelName": "LightActuatorModel",
         "EvaluationMethod": "SERIAL",
         "Key": "detectorModelKey",
-        "RoleArn": "arn:aws:iam::689988310164:role/service-role/TestRole"
+        "RoleArn": "${role_arn}"
       }
     },
     "lightSensor": {
