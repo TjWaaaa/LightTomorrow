@@ -7,7 +7,7 @@ locals {
   ]
 }
 
-resource "aws_iam_role" "iot_events_full_access" {
+resource "aws_iam_role" "iotevents_access" {
   name = "iot_events_full_access"
 
   assume_role_policy = jsonencode({
@@ -24,29 +24,18 @@ resource "aws_iam_role" "iot_events_full_access" {
   })
 }
 
-data "aws_iam_policy_document" "policy" {
-  statement {
-    effect    = "Allow"
-    actions   = ["*"]
-    resources = ["*"]
-  }
-}
+resource "null_resource" "previous" {}
 
-resource "aws_iam_policy" "policy" {
-  name   = "allow_everything"
-  policy = data.aws_iam_policy_document.policy.json
-}
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [null_resource.previous]
 
-resource "aws_iam_role_policy_attachment" "iot_events_full_access_attach" {
-  role       = aws_iam_role.iot_events_full_access.name
-  policy_arn = aws_iam_policy.policy.arn
+  create_duration = "30s"
 }
 
 resource "aws_cloudformation_stack" "network" {
   name          = "detector-model-stack"
-  template_body = templatefile("${path.module}/detectormodel/LightActuator.json", { role_arn = aws_iam_role.iot_events_full_access.arn })
-
-  depends_on = [aws_iam_role_policy_attachment.iot_events_full_access_attach]
+  template_body = templatefile("${path.module}/detectormodel/LightActuator.json", { role_arn = aws_iam_role.iotevents_access.arn })
+  depends_on    = [time_sleep.wait_30_seconds]
 }
 
 resource "aws_iot_thing_type" "sensor" {
