@@ -21,12 +21,12 @@ resource "aws_iot_certificate" "cert" {
   active = true
 }
 
-resource "aws_iot_policy_attachment" "attachment" {
+resource "aws_iot_policy_attachment" "policy_attachment" {
   policy = var.policy.name
   target = aws_iot_certificate.cert.arn
 }
 
-resource "aws_iot_thing_principal_attachment" "attachment" {
+resource "aws_iot_thing_principal_attachment" "principal_attachment" {
   principal = aws_iot_certificate.cert.arn
   thing     = aws_iot_thing.thing.name
 }
