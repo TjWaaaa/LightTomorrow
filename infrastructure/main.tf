@@ -30,7 +30,7 @@ resource "aws_iot_thing_type" "actuator" {
 
 module "sensors" {
   for_each   = toset(local.sensors)
-  source     = "./thing"
+  source     = "./modules/thing"
   name       = "sensor_${each.key}"
   thing_type = aws_iot_thing_type.sensor
   policy     = aws_iot_policy.thing_policy
@@ -38,7 +38,7 @@ module "sensors" {
 
 module "actuators" {
   for_each   = toset(local.actuators)
-  source     = "./thing"
+  source     = "./modules/thing"
   name       = "actuator_${each.key}"
   thing_type = aws_iot_thing_type.actuator
   policy     = aws_iot_policy.thing_policy
