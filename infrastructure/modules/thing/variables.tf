@@ -1,5 +1,5 @@
 variable "name" {
-  description = "The name of the AWS IoT Thing to be created. This name needs to be unique within your AWS account."
+  description = "The name of the AWS IoT Thing. This name needs to be unique within your AWS account."
 }
 
 variable "policy" {
