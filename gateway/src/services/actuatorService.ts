@@ -15,7 +15,7 @@ export class LightActuatorService {
   async setup() {
     await this.setDisplayLightStatus();
 
-    this.mqttService.subscribe("topic", (payload, topic) => {
+    this.mqttService.subscribe("topic/actuator/light", (payload, topic) => {
       this.isLightOn = JSON.parse(payload).lightStatusParse; // This logic will be changed after final terraform
       this.setDisplayLightStatus();
     });

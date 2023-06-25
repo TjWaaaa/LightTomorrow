@@ -1,6 +1,6 @@
 locals {
   sensors = [
-    "proximity_workplace_1", "proximity_workplace_2", "lightsensor_outside"
+    "proximity_workplace_1", "proximity_workplace_2", "light_outside"
   ]
   actuators = [
     "light_workplace_1", "light_workplace_2"
