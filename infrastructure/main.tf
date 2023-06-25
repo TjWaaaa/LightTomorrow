@@ -24,9 +24,18 @@ resource "aws_iam_role" "iotevents_access" {
   })
 }
 
+resource "null_resource" "previous" {}
+
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [null_resource.previous]
+
+  create_duration = "30s"
+}
+
 resource "aws_cloudformation_stack" "network" {
   name          = "detector-model-stack"
   template_body = templatefile("${path.module}/detectormodel/LightActuator.json", { role_arn = aws_iam_role.iotevents_access.arn })
+  depends_on    = [time_sleep.wait_30_seconds]
 }
 
 resource "aws_iot_thing_type" "sensor" {
