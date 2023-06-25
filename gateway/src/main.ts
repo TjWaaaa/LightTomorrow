@@ -28,7 +28,7 @@ const main = async () => {
   await iotee.connect();
 
   const mqttConfig: Mqtt = {
-    host: process.env.MQTT_HOST,
+    host: process.env.MQTT_HOST!,
     port: parseInt(process.env.MQTT_PORT!),
     caPath: process.env.CA_PATH!,
     certPath: process.env.CERT_PATH!,
