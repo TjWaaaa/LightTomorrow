@@ -15,6 +15,7 @@ const DEVICE_ID = process.env.DEVICE_ID!;
 export abstract class SensorService {
   protected mode: SensorMode;
   protected currentValue: number;
+  abstract thingLabel: string;
 
   constructor(protected iotee: Iotee, protected mqttService: MqttService) {
     this.mode = DEFAULT_MODE;
@@ -50,7 +51,7 @@ export abstract class SensorService {
       await this.updateDisplay();
     });
 
-    this.run()
+    this.run();
   }
 
   async run() {
@@ -62,7 +63,7 @@ export abstract class SensorService {
 
     await this.updateDisplay();
 
-    const topic = "thing/" + this.getSensorType() + "/" + DEVICE_ID;
+    const topic = "topic/sensor/" + DEVICE_ID;
 
     const message = JSON.stringify({
       sensorValue: this.currentValue.toFixed(2),
@@ -70,11 +71,12 @@ export abstract class SensorService {
     this.mqttService.publish(topic, message);
 
     // This is better than setInterval because it will wait for the previous
-    setTimeout(() => this.run(), INTERVAL)
+    setTimeout(() => this.run(), INTERVAL);
   }
 
   private async updateDisplay() {
-    const displayMessage = this.getThingLabel() +
+    const displayMessage =
+      this.thingLabel +
       "\n" +
       this.currentValue.toFixed(2) +
       "\n" +
@@ -89,6 +91,4 @@ export abstract class SensorService {
   }
 
   protected abstract getSensorValue(): Promise<number>;
-  protected abstract getSensorType(): string;
-  protected abstract getThingLabel(): string;
 }
