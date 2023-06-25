@@ -28,8 +28,8 @@ const main = async () => {
   await iotee.connect();
 
   const mqttConfig: Mqtt = {
-    host: "a2scw8p2blnw89-ats.iot.eu-central-1.amazonaws.com",
-    port: 8883,
+    host: process.env.MQTT_HOST,
+    port: parseInt(process.env.MQTT_PORT!),
     caPath: process.env.CA_PATH!,
     certPath: process.env.CERT_PATH!,
     keyPath: process.env.KEY_PATH!,
@@ -42,5 +42,4 @@ const main = async () => {
   new deviceType[process.env.DEVICE_TYPE as DeviceType](iotee, mqttService);
 };
 
-main()
-  .catch((err) => console.error(err));
+main().catch((err) => console.error(err));
