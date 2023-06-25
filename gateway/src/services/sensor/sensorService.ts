@@ -1,10 +1,13 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
+import { config } from "dotenv";
 import { SensorMode } from "../../interfaces";
 import { MqttService } from "../mqtt";
 
-const DEFAULT_INTERVAL = 1000;
 const STEP_SIZE_MANUAL_MODE = 50;
 const DEFAULT_MODE = SensorMode.AUTO;
+const DEFAULT_INTERVAL = 1000;
+
+config();
 
 const INTERVAL = parseInt(process.env.SENSOR_INTERVAL!) || DEFAULT_INTERVAL;
 const DEVICE_ID = process.env.DEVICE_ID!;
@@ -58,15 +61,15 @@ export abstract class SensorService {
 
     await this.iotee.setDisplay(
       this.getThingLabel() +
-      "\n" +
-      this.currentValue.toFixed(2) +
-      "\n" +
-      "Mode: " +
-      this.mode +
-      "\n" +
-      "A: switch mode \n" +
-      "X: increase value \n" +
-      "Y: decrease value"
+        "\n" +
+        this.currentValue.toFixed(2) +
+        "\n" +
+        "Mode: " +
+        this.mode +
+        "\n" +
+        "A: switch mode \n" +
+        "X: increase value \n" +
+        "Y: decrease value"
     );
 
     const topic = "thing/" + this.getSensorType() + "/" + DEVICE_ID;
