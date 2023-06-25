@@ -1,8 +1,8 @@
 resource "aws_iot_topic_rule" "lighLevelRule01" {
   name        = "lightLevelRule01"
-  description = "rule for forwarding lightlevels to workplace01"
+  description = "rule for forwarding lightlevels to thing_actuator_light_workplace_1"
   enabled     = true
-  sql         = "SELECT *, 'workplace01' as detectorModelKey FROM 'topic/sensor/light'"
+  sql         = "SELECT *, 'thing_actuator_light_workplace_1' as detectorModelKey FROM 'topic/sensor/thing_sensor_light_outside'"
   sql_version = "2016-03-23"
 
   iot_events {
@@ -20,9 +20,9 @@ resource "aws_iot_topic_rule" "lighLevelRule01" {
 
 resource "aws_iot_topic_rule" "lighLevelRule02" {
   name        = "lightLevelRule02"
-  description = "rule for forwarding lightlevels to workplace02"
+  description = "rule for forwarding lightlevels to thing_actuator_light_workplace_2"
   enabled     = true
-  sql         = "SELECT *, 'workplace02' as detectorModelKey FROM 'topic/sensor/light'"
+  sql         = "SELECT *, 'thing_actuator_light_workplace_2' as detectorModelKey FROM 'topic/sensor/thing_sensor_light_outside'"
   sql_version = "2016-03-23"
 
   iot_events {
@@ -38,11 +38,31 @@ resource "aws_iot_topic_rule" "lighLevelRule02" {
   }
 }
 
-resource "aws_iot_topic_rule" "proximityRule" {
-  name        = "proximityRule"
-  description = "rule for forwarding proximity"
+resource "aws_iot_topic_rule" "proximityRule01" {
+  name        = "proximityRule01"
+  description = "rule for forwarding proximity to thing_actuator_light_workplace_1"
   enabled     = true
-  sql         = "SELECT * FROM 'topic/sensor/proximity'"
+  sql         = "SELECT *, 'thing_actuator_light_workplace_1' as detectorModelKey FROM 'topic/sensor/thing_sensor_proximity_workplace_1'"
+  sql_version = "2016-03-23"
+
+  iot_events {
+    input_name = "proximitySensorInput"
+    role_arn   = aws_iam_role.eventsRole.arn
+  }
+
+  error_action {
+    republish {
+      role_arn = aws_iam_role.eventsRole.arn
+      topic    = "topic/error"
+    }
+  }
+}
+
+resource "aws_iot_topic_rule" "proximityRule02" {
+  name        = "proximityRule02"
+  description = "rule for forwarding proximity to thing_actuator_light_workplace_2"
+  enabled     = true
+  sql         = "SELECT *, 'thing_actuator_light_workplace_2' as detectorModelKey FROM 'topic/sensor/thing_sensor_proximity_workplace_2'"
   sql_version = "2016-03-23"
 
   iot_events {
