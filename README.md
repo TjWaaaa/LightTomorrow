@@ -22,3 +22,13 @@ export AWS_DEFAULT_REGION=
 export AWS_SECRET_ACCESS_KEY=
 terraform apply
 ```
+
+Light Sensor Payload:
+{
+"lightLevel":
+}
+
+Proximity Sensor Payload
+{
+"proximity":
+}
