@@ -42,6 +42,14 @@ export class LightActuatorService {
   }
 
   private async setDisplayLightStatus() {
+    let ledColors: [number, number, number, number];
+    if (this.isLightOn) {
+      ledColors = [255, 0, 0, 1];
+    } else {
+      ledColors = [0, 255, 0, 1];
+    }
+
+    await this.iotee.setLED(...ledColors);
     await this.iotee.setDisplay(
       `Light Status: \n${this.isLightOn ? "ON" : "OFF"}`
     );
