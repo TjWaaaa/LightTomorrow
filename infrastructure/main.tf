@@ -61,6 +61,7 @@ resource "aws_cloudformation_stack" "detector-model-stack" {
   template_body = templatefile("${path.module}/detectormodel/LightActuator.json", { role_arn = aws_iam_role.iotevents_access.arn })
   depends_on    = [time_sleep.wait_30_seconds]
 }
+# TODO: remove comments
 
 # resource "aws_iot_thing_type" "sensor" {
 #   name = "Sensor"
