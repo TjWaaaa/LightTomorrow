@@ -6,6 +6,6 @@ variable "policy" {
   description = "The IoT policy to be attached to the AWS IoT Thing. This defines the permissions for the IoT Thing within AWS IoT."
 }
 
-variable "thing_type" {
-  description = "The IoT Thing type."
-}
+# variable "thing_type" {
+#   description = "The IoT Thing type."
+# }

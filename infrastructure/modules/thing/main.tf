@@ -1,6 +1,6 @@
 resource "aws_iot_thing" "thing" {
-  name            = "thing_${var.name}"
-  thing_type_name = var.thing_type.name
+  name = "thing_${var.name}"
+  # thing_type_name = var.thing_type.name
 }
 
 resource "tls_private_key" "key" {

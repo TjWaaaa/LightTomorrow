@@ -7,21 +7,62 @@ locals {
   ]
 }
 
-resource "aws_iam_role" "iotevents_access" {
-  name = "iot_events_full_access"
+data "aws_iam_policy_document" "assume_role_policy_cloud_formation" {
+  statement {
+    effect = "Allow"
 
-  assume_role_policy = jsonencode({
+    principals {
+      type        = "Service"
+      identifiers = ["iotevents.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_policy" "iot_events_cloud_formation_policy" {
+  name = "iot_events_full_access_attachment"
+
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
-        Principal = {
-          Service = "iotevents.amazonaws.com"
-        }
-        Effect = "Allow"
-      },
+        Action = [
+          "iotevents:*",
+          "iot:*"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
     ]
   })
+}
+
+resource "aws_iam_policy" "iot_events_cloud_formation_policy" {
+  name = "iot_events_full_access_attachment"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "iotevents:*",
+          "iot:*"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role" "iotevents_access" {
+  name               = "iot_events_full_access"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_cloud_formation.json
+}
+
+resource "aws_iam_role_policy_attachment" "iot_events_full_access_attachment" {
+  role       = aws_iam_role.iotevents_access.name
+  policy_arn = aws_iam_policy.iot_events_cloud_formation_policy.arn
 }
 
 resource "null_resource" "previous" {}
@@ -38,36 +79,36 @@ resource "aws_cloudformation_stack" "network" {
   depends_on    = [time_sleep.wait_30_seconds]
 }
 
-resource "aws_iot_thing_type" "sensor" {
-  name = "Sensor"
+# resource "aws_iot_thing_type" "sensor" {
+#   name = "Sensor"
 
-  properties {
-    description = "Used for the proximity- and light sensor."
-  }
-}
+#   properties {
+#     description = "Used for the proximity- and light sensor."
+#   }
+# }
 
-resource "aws_iot_thing_type" "actuator" {
-  name = "Actuator"
+# resource "aws_iot_thing_type" "actuator" {
+#   name = "Actuator"
 
-  properties {
-    description = "Used for the workplace light actuators."
-  }
-}
+#   properties {
+#     description = "Used for the workplace light actuators."
+#   }
+# }
 
 module "sensors" {
-  for_each   = toset(local.sensors)
-  source     = "./modules/thing"
-  name       = "sensor_${each.key}"
-  thing_type = aws_iot_thing_type.sensor
-  policy     = aws_iot_policy.thing_policy
+  for_each = toset(local.sensors)
+  source   = "./modules/thing"
+  name     = "sensor_${each.key}"
+  #   thing_type = aws_iot_thing_type.sensor
+  policy = aws_iot_policy.thing_policy
 }
 
 module "actuators" {
-  for_each   = toset(local.actuators)
-  source     = "./modules/thing"
-  name       = "actuator_${each.key}"
-  thing_type = aws_iot_thing_type.actuator
-  policy     = aws_iot_policy.thing_policy
+  for_each = toset(local.actuators)
+  source   = "./modules/thing"
+  name     = "actuator_${each.key}"
+  #   thing_type = aws_iot_thing_type.actuator
+  policy = aws_iot_policy.thing_policy
 }
 
 data "aws_iam_policy_document" "thing_policy_doc" {
