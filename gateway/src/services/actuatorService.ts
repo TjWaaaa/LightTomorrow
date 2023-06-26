@@ -8,6 +8,8 @@ const DEFAULT_IS_LIGHT_ON = false;
 const RGBA_ON = [0, 255, 0, 255] satisfies RGBAColor;
 const RGBA_OFF = [255, 0, 0, 255] satisfies RGBAColor;
 
+const ACTUATOR_TOPIC = "topic/actuator/light";
+
 config();
 
 const DEVICE_ID = process.env.DEVICE_ID!;
@@ -24,10 +26,9 @@ export class LightActuatorService {
   async setup() {
     await this.setDisplayLightStatus();
 
-    this.mqttService.subscribe("topic/actuator/light", (payload, topic) => {
+    this.mqttService.subscribe(ACTUATOR_TOPIC, (payload, topic) => {
       const payloadParsed = JSON.parse(payload);
       if (payloadParsed.payload.detector.keyValue != DEVICE_ID) {
-        console.log("no this device");
         return;
       }
       console.log("Light is: ", payloadParsed.payload.state.stateName);
