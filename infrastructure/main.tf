@@ -149,9 +149,10 @@ resource "local_file" "actuators_env" {
   for_each = toset(local.actuators)
   filename = "../packages/${module.actuators[each.key].thing_name}/.env"
   content = templatefile("templates/.env.tftpl", {
-    thing_name = module.actuators[each.key].thing_name
-    mqtt_host  = data.aws_iot_endpoint.iot_endpoint.endpoint_address
-    mqtt_port  = 8883
+    thing_name  = module.actuators[each.key].thing_name
+    mqtt_host   = data.aws_iot_endpoint.iot_endpoint.endpoint_address
+    mqtt_port   = 8883
+    device_type = "LightActuator"
   })
 }
 
@@ -159,8 +160,9 @@ resource "local_file" "sensors_env" {
   for_each = toset(local.sensors)
   filename = "../packages/${module.sensors[each.key].thing_name}/.env"
   content = templatefile("templates/.env.tftpl", {
-    thing_name = module.sensors[each.key].thing_name
-    mqtt_host  = data.aws_iot_endpoint.iot_endpoint.endpoint_address
-    mqtt_port  = 8883
+    thing_name  = module.sensors[each.key].thing_name
+    mqtt_host   = data.aws_iot_endpoint.iot_endpoint.endpoint_address
+    mqtt_port   = 8883
+    device_type = can(regex("light", each.key)) ? "LightSensor" : "ProximitySensor"
   })
 }
