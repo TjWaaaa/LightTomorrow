@@ -1,5 +1,5 @@
 include:
-  - template: Terraform.latest.gitlab-ci.yml
+  - local: ".gitlab-ci.terraform.yml"
   - local: ".gitlab-ci.gateway.yml"
 
 stages:
@@ -8,9 +8,4 @@ stages:
   - build
   - deploy
   - cleanup
-
-deploy:
-  extends: .terraform:deploy
-  artifacts:
-    paths:
-      - "${TF_ROOT}/../gateway/certs/"
+  - build_gateway
