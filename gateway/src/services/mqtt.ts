@@ -42,7 +42,8 @@ export class MqttService {
 
       this.client.on("error", (err) => {
         console.error(
-          `Client with ID ${this.config.clientId} failed to connect to ${this.config.host}: ${err.message}`
+          `Client with ID ${this.config.clientId} failed to connect to ${this.config.host}:`,
+          err.message
         );
         reject(err);
       });
