@@ -51,8 +51,6 @@ export abstract class SensorService {
       }
       await this.updateDisplay();
     });
-
-    this.run();
   }
 
   async run() {
