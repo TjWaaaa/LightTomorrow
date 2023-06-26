@@ -90,7 +90,11 @@ export abstract class SensorService {
       "X: increase value \n" +
       "Y: decrease value";
 
-    await this.iotee.setDisplay(displayMessage);
+    try {
+      await this.iotee.setDisplay(displayMessage);
+    } catch (error) {
+      console.log("Error setting display on device:", error);
+    }
   }
 
   protected abstract getSensorValue(): Promise<number>;
