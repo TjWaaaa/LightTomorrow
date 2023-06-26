@@ -5,6 +5,7 @@ export interface Mqtt {
   certPath: string;
   keyPath: string;
   clientId: string;
+  errorCallback: (error: Error) => void;
 }
 
 export enum SensorMode {

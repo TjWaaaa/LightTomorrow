@@ -34,6 +34,9 @@ const main = async () => {
     certPath: process.env.CERT_PATH!,
     keyPath: process.env.KEY_PATH!,
     clientId: process.env.DEVICE_ID!,
+    errorCallback: () => {
+      iotee.setDisplay("Error occured!");
+    },
   };
 
   const mqttService = new MqttService(mqttConfig);

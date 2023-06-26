@@ -45,6 +45,7 @@ export class MqttService {
           `Client with ID ${this.config.clientId} failed to connect to ${this.config.host}:`,
           err.message
         );
+        this.config.errorCallback(err);
         reject(err);
       });
     });
