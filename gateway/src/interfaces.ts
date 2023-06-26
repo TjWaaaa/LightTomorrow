@@ -12,3 +12,5 @@ export enum SensorMode {
   AUTO = "AUTO",
   MANUAL = "MANUAL",
 }
+
+export type RGBAColor = [number, number, number, number];

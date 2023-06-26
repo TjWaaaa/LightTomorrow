@@ -1,8 +1,12 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
 import { config } from "dotenv";
+import { RGBAColor } from "../interfaces";
 import { MqttService } from "./mqtt";
 
 const DEFAULT_IS_LIGHT_ON = false;
+
+const RGBA_ON = [0, 255, 0, 255] satisfies RGBAColor;
+const RGBA_OFF = [255, 0, 0, 255] satisfies RGBAColor;
 
 config();
 
@@ -42,11 +46,11 @@ export class LightActuatorService {
   }
 
   private async setDisplayLightStatus() {
-    let ledColors: [number, number, number, number];
+    let ledColors: RGBAColor;
     if (this.isLightOn) {
-      ledColors = [255, 0, 0, 1];
+      ledColors = RGBA_ON;
     } else {
-      ledColors = [0, 255, 0, 1];
+      ledColors = RGBA_OFF;
     }
 
     await this.iotee.setLED(...ledColors);
