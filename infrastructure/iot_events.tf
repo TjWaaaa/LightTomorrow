@@ -7,7 +7,7 @@ resource "aws_iot_topic_rule" "lighLevelRule01" {
   depends_on  = [aws_cloudformation_stack.detector-model-stack]
 
   iot_events {
-    input_name = "lightSensorInput"
+    input_name = "lightSensor"
     role_arn   = aws_iam_role.eventsRole.arn
   }
 
@@ -28,7 +28,7 @@ resource "aws_iot_topic_rule" "lighLevelRule02" {
   depends_on  = [aws_cloudformation_stack.detector-model-stack]
 
   iot_events {
-    input_name = "lightSensorInput"
+    input_name = "lightSensor"
     role_arn   = aws_iam_role.eventsRole.arn
   }
 
@@ -49,7 +49,7 @@ resource "aws_iot_topic_rule" "proximityRule01" {
   depends_on  = [aws_cloudformation_stack.detector-model-stack]
 
   iot_events {
-    input_name = "proximitySensorInput"
+    input_name = "proximitySensor"
     role_arn   = aws_iam_role.eventsRole.arn
   }
 
@@ -70,7 +70,7 @@ resource "aws_iot_topic_rule" "proximityRule02" {
   depends_on  = [aws_cloudformation_stack.detector-model-stack]
 
   iot_events {
-    input_name = "proximitySensorInput"
+    input_name = "proximitySensor"
     role_arn   = aws_iam_role.eventsRole.arn
   }
 
