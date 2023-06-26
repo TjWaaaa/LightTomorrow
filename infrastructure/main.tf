@@ -117,30 +117,50 @@ data "http" "root_ca" {
 }
 
 resource "local_file" "root_ca" {
-  filename = "${path.module}/../gateway/certs/root-CA.crt"
+  filename = "../packages/root-CA.crt"
   content  = data.http.root_ca.response_body
 }
 
 resource "local_file" "sensors_cert_pem" {
   for_each = toset(local.sensors)
-  filename = "../gateway/certs/sensors/${each.key}/certificate.pem.crt"
+  filename = "../packages/${module.sensors[each.key].thing_name}/certificate.pem.crt"
   content  = module.sensors[each.key].cert
 }
 
 resource "local_file" "sensors_key_pem" {
   for_each = toset(local.sensors)
-  filename = "../gateway/certs/sensors/${each.key}/private.pem.key"
+  filename = "../packages/${module.sensors[each.key].thing_name}/private.pem.key"
   content  = module.sensors[each.key].private_key
 }
 
 resource "local_file" "actuators_cert_pem" {
   for_each = toset(local.actuators)
-  filename = "../gateway/certs/actuators/${each.key}/certificate.pem.crt"
+  filename = "../packages/${module.actuators[each.key].thing_name}/certificate.pem.crt"
   content  = module.actuators[each.key].cert
 }
 
 resource "local_file" "actuators_key_pem" {
   for_each = toset(local.actuators)
-  filename = "../gateway/certs/actuators/${each.key}/private.pem.key"
+  filename = "../packages/${module.actuators[each.key].thing_name}/private.pem.key"
   content  = module.actuators[each.key].private_key
+}
+
+resource "local_file" "actuators_env" {
+  for_each = toset(local.actuators)
+  filename = "../packages/${module.actuators[each.key].thing_name}/.env"
+  content = templatefile("templates/.env.tftpl", {
+    thing_name = module.actuators[each.key].thing_name
+    mqtt_host  = data.aws_iot_endpoint.iot_endpoint.endpoint_address
+    mqtt_port  = 8883
+  })
+}
+
+resource "local_file" "sensors_env" {
+  for_each = toset(local.sensors)
+  filename = "../packages/${module.sensors[each.key].thing_name}/.env"
+  content = templatefile("templates/.env.tftpl", {
+    thing_name = module.sensors[each.key].thing_name
+    mqtt_host  = data.aws_iot_endpoint.iot_endpoint.endpoint_address
+    mqtt_port  = 8883
+  })
 }
