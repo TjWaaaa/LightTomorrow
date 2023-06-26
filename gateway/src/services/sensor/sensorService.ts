@@ -93,7 +93,7 @@ export abstract class SensorService {
     try {
       await this.iotee.setDisplay(displayMessage);
     } catch (error) {
-      console.log("Error setting display on device:", error);
+      console.log("Display device failed", error);
     }
   }
 

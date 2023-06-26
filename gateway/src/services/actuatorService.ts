@@ -53,10 +53,14 @@ export class LightActuatorService {
       ledColors = RGBA_OFF;
     }
 
-    await this.iotee.setLED(...ledColors);
-    await this.iotee.setDisplay(
-      `Light Status: \n${this.isLightOn ? "ON" : "OFF"}`
-    );
+    try {
+      await this.iotee.setLED(...ledColors);
+      await this.iotee.setDisplay(
+        `Light Status: \n${this.isLightOn ? "ON" : "OFF"}`
+      );
+    } catch (error) {
+      console.error("Display device failed", error);
+    }
   }
 }
 
