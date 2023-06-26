@@ -2,6 +2,9 @@ cache:
   paths:
     - gateway/node_modules/
 
+stages:
+  - build_gateway
+
 build_project:
   image: node:20
   stage: build_gateway
