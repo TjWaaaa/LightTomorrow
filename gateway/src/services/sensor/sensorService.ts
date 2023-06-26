@@ -67,7 +67,7 @@ export abstract class SensorService {
     const topic = "topic/sensor/" + DEVICE_ID;
 
     const message = JSON.stringify({
-      [this.payloadKey]: this.currentValue.toFixed(2),
+      [this.payloadKey]: Math.floor(this.currentValue),
     });
     this.mqttService.publish(topic, message);
 
