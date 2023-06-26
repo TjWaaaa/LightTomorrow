@@ -63,26 +63,3 @@ export class LightActuatorService {
     }
   }
 }
-
-// {
-//   "eventTime": 1687777879777,
-//   "payload": {
-//     "actionExecutionId": "5376658b-d94a-369a-9482-ba6a0c0eaf1a",
-//     "detector": {
-//       "detectorModelName": "LightActuatorModel",
-//       "keyValue": "thing_actuator_light_workplace_1",
-//       "detectorModelVersion": "3"
-//     },
-//     "eventTriggerDetails": {
-//       "inputName": "lightSensor",
-//       "messageId": "5e4a6bd1-7d38-462a-92fd-160c3182a550",
-//       "triggerType": "Message"
-//     },
-//     "state": {
-//       "stateName": "LightOff",
-//       "variables": {},
-//       "timers": {}
-//     }
-//   },
-//   "eventName": "TurnOffLight"
-// }
