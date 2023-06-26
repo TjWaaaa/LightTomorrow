@@ -8,7 +8,6 @@ stages:
   - build
   - deploy
   - cleanup
-  - build_gateway
 
 deploy:
   extends: .terraform:deploy
