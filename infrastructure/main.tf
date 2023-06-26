@@ -38,23 +38,6 @@ resource "aws_iam_policy" "iot_events_cloud_formation_policy" {
   })
 }
 
-resource "aws_iam_policy" "iot_events_cloud_formation_policy" {
-  name = "iot_events_full_access_attachment"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "iotevents:*",
-          "iot:*"
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      }
-    ]
-  })
-}
 resource "aws_iam_role" "iotevents_access" {
   name               = "iot_events_full_access"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_cloud_formation.json
