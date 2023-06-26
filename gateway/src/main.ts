@@ -21,8 +21,9 @@ const deviceType = {
 };
 
 const main = async () => {
-  console.log(process.env.DEVICE_URL);
+  console.log("Trying to connect to device on port: ", process.env.DEVICE_URL);
   const iotee = new Iotee(process.env.DEVICE_URL!);
+  console.log("✅ Device connected");
 
   iotee.setLogLevel(LogLevel.WARN);
   await iotee.connect();
@@ -34,6 +35,9 @@ const main = async () => {
     certPath: process.env.CERT_PATH!,
     keyPath: process.env.KEY_PATH!,
     clientId: process.env.DEVICE_ID!,
+    errorCallback: () => {
+      iotee.setDisplay("❌ Error occured!");
+    },
   };
 
   const mqttService = new MqttService(mqttConfig);

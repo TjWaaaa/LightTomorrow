@@ -1,7 +1,18 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
+import { config } from "dotenv";
+import { RGBAColor } from "../interfaces";
 import { MqttService } from "./mqtt";
 
 const DEFAULT_IS_LIGHT_ON = false;
+
+const RGBA_ON = [0, 255, 0, 255] satisfies RGBAColor;
+const RGBA_OFF = [255, 0, 0, 255] satisfies RGBAColor;
+
+const ACTUATOR_TOPIC = "topic/actuator/light";
+
+config();
+
+const DEVICE_ID = process.env.DEVICE_ID!;
 
 export class LightActuatorService {
   private isLightOn: boolean;
@@ -15,8 +26,17 @@ export class LightActuatorService {
   async setup() {
     await this.setDisplayLightStatus();
 
-    this.mqttService.subscribe("topic/actuator/light", (payload, topic) => {
-      this.isLightOn = JSON.parse(payload).lightStatusParse; // This logic will be changed after final terraform
+    this.mqttService.subscribe(ACTUATOR_TOPIC, (payload, topic) => {
+      const payloadParsed = JSON.parse(payload);
+      if (payloadParsed.payload.detector.keyValue != DEVICE_ID) {
+        return;
+      }
+      console.log("Light is: ", payloadParsed.payload.state.stateName);
+      this.isLightOn =
+        (payloadParsed.payload.state.stateName as "LightOff" | "LightOn") ===
+        "LightOff"
+          ? false
+          : true;
       this.setDisplayLightStatus();
     });
 
@@ -27,8 +47,20 @@ export class LightActuatorService {
   }
 
   private async setDisplayLightStatus() {
-    await this.iotee.setDisplay(
-      `Light Status: \n${this.isLightOn ? "ON" : "OFF"}`
-    );
+    let ledColors: RGBAColor;
+    if (this.isLightOn) {
+      ledColors = RGBA_ON;
+    } else {
+      ledColors = RGBA_OFF;
+    }
+
+    try {
+      await this.iotee.setLED(...ledColors);
+      await this.iotee.setDisplay(
+        `Light Status: \n${this.isLightOn ? "ON" : "OFF"}`
+      );
+    } catch (error) {
+      console.error("Display device failed", error);
+    }
   }
 }

@@ -51,13 +51,16 @@ export abstract class SensorService {
       }
       await this.updateDisplay();
     });
-
     this.run();
   }
 
   async run() {
-    if (this.mode === SensorMode.AUTO) {
-      this.currentValue = await this.getSensorValue();
+    try {
+      if (this.mode === SensorMode.AUTO) {
+        this.currentValue = await this.getSensorValue();
+      }
+    } catch (error) {
+      console.log("Error getting sensor value:", error);
     }
 
     console.log("Current Value:", this.currentValue.toFixed(2));
@@ -67,7 +70,7 @@ export abstract class SensorService {
     const topic = "topic/sensor/" + DEVICE_ID;
 
     const message = JSON.stringify({
-      [this.payloadKey]: this.currentValue.toFixed(2),
+      [this.payloadKey]: Math.floor(this.currentValue),
     });
     this.mqttService.publish(topic, message);
 
@@ -88,7 +91,11 @@ export abstract class SensorService {
       "X: increase value \n" +
       "Y: decrease value";
 
-    await this.iotee.setDisplay(displayMessage);
+    try {
+      await this.iotee.setDisplay(displayMessage);
+    } catch (error) {
+      console.log("Display device failed", error);
+    }
   }
 
   protected abstract getSensorValue(): Promise<number>;
