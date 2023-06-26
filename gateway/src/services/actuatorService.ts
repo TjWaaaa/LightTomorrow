@@ -26,9 +26,12 @@ export class LightActuatorService {
         console.log("no this device");
         return;
       }
-      // "LightOff" | "LightOn"
+      console.log("Light is: ", payloadParsed.payload.state.stateName);
       this.isLightOn =
-        payloadParsed.payload.state === "LightOff" ? false : true;
+        (payloadParsed.payload.state.stateName as "LightOff" | "LightOn") ===
+        "LightOff"
+          ? false
+          : true;
       this.setDisplayLightStatus();
     });
 
