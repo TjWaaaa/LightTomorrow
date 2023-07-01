@@ -5,6 +5,7 @@
   "main": "./src/main.ts",
   "scripts": {
     "start": "npx ts-node ./src/main.ts",
+    "build": "npx tsc --outDir build",
     "test": "jest"
   },
   "author": "",

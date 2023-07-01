@@ -1,8 +1,8 @@
-import { Iotee, LogLevel, ReceiveEvents } from "@iotee/node-iotee";
+import { Iotee, LogLevel } from "@iotee/node-iotee";
 import { config } from "dotenv";
-import { MqttService } from "./services/mqtt";
-import { LightActuatorService } from "./services/actuatorService";
 import { Mqtt } from "./interfaces";
+import { LightActuatorService } from "./services/actuatorService";
+import { MqttService } from "./services/mqtt";
 import { LightSensorService } from "./services/sensor/lightSensorService";
 import { ProximitySensorService } from "./services/sensor/proximitySensorService";
 
@@ -21,23 +21,27 @@ const deviceType = {
 };
 
 const main = async () => {
-  console.log(process.env.DEVICE_URL);
+  console.log("Trying to connect to device on port: ", process.env.DEVICE_URL);
   const iotee = new Iotee(process.env.DEVICE_URL!);
+  console.log("✅ Device connected");
 
   iotee.setLogLevel(LogLevel.WARN);
   await iotee.connect();
 
   const mqttConfig: Mqtt = {
-    host: "a2scw8p2blnw89-ats.iot.eu-central-1.amazonaws.com",
-    port: 8883,
+    host: process.env.MQTT_HOST!,
+    port: parseInt(process.env.MQTT_PORT!),
     caPath: process.env.CA_PATH!,
     certPath: process.env.CERT_PATH!,
     keyPath: process.env.KEY_PATH!,
     clientId: process.env.DEVICE_ID!,
+    errorCallback: () => {
+      iotee.setDisplay("❌ Error occured!");
+    },
   };
 
   const mqttService = new MqttService(mqttConfig);
-  //await mqttService.connect();
+  await mqttService.connect();
 
   new deviceType[process.env.DEVICE_TYPE as DeviceType](iotee, mqttService);
 };
