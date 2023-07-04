@@ -1,162 +1,162 @@
 {
-  "Description": "Light Actuator Detector Model Template",
-  "Resources": {
-    "LightDetectorModel": {
-      "Type": "AWS::IoTEvents::DetectorModel",
-      "Properties": {
-        "DetectorModelDefinition": {
-          "States": [
-            {
-              "StateName": "LightOff",
-              "OnInput": {
-                "Events": [
-                  {
-                    "EventName": "setLightLevel",
-                    "Condition": "$input.lightSensor.lightLevel != $variable.lightLevel",
-                    "Actions": [
-                      {
-                        "SetVariable": {
-                          "VariableName": "lightLevel",
-                          "Value": "$input.lightSensor.lightLevel"
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "EventName": "setProximity",
-                    "Condition": "$input.proximitySensor.proximity != $variable.proximity",
-                    "Actions": [
-                      {
-                        "SetVariable": {
-                          "VariableName": "proximity",
-                          "Value": "$input.proximitySensor.proximity"
-                        }
-                      }
-                    ]
-                  }
-                ],
-                "TransitionEvents": [
-                  {
-                    "EventName": "Out",
-                    "Condition": "$variable.lightLevel < 400 && $variable.proximity >= 100",
-                    "Actions": [],
-                    "NextState": "LightOn"
-                  }
-                ]
-              },
-              "OnEnter": {
-                "Events": [
-                  {
-                    "EventName": "TurnOffLight",
-                    "Condition": "true",
-                    "Actions": [
-                      {
-                        "IotTopicPublish": {
-                          "MqttTopic": "topic/actuator/light"
-                        }
-                      }
-                    ]
-                  }
-                ]
-              },
-              "OnExit": {
-                "Events": []
-              }
-            },
-            {
-              "StateName": "LightOn",
-              "OnInput": {
-                "Events": [
-                  {
-                    "EventName": "setLightLevel",
-                    "Condition": "$input.lightSensor.lightLevel != $variable.lightLevel",
-                    "Actions": [
-                      {
-                        "SetVariable": {
-                          "VariableName": "lightLevel",
-                          "Value": "$input.lightSensor.lightLevel"
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "EventName": "setProximity",
-                    "Condition": "$input.proximitySensor.proximity != $variable.proximity",
-                    "Actions": [
-                      {
-                        "SetVariable": {
-                          "VariableName": "proximity",
-                          "Value": "$input.proximitySensor.proximity"
-                        }
-                      }
-                    ]
-                  }
-                ],
-                "TransitionEvents": [
-                  {
-                    "EventName": "In",
-                    "Condition": "$variable.lightLevel >= 400 || $variable.proximity < 100",
-                    "Actions": [],
-                    "NextState": "LightOff"
-                  }
-                ]
-              },
-              "OnEnter": {
-                "Events": [
-                  {
-                    "EventName": "TurnOnLight",
-                    "Condition": "true",
-                    "Actions": [
-                      {
-                        "IotTopicPublish": {
-                          "MqttTopic": "topic/actuator/light"
-                        }
-                      }
-                    ]
-                  }
-                ]
-              },
-              "OnExit": {
-                "Events": []
-              }
-            }
-          ],
-          "InitialStateName": "LightOff"
-        },
-        "DetectorModelDescription": "Detector model representing the light actuator",
-        "DetectorModelName": "LightActuatorModel",
-        "EvaluationMethod": "SERIAL",
-        "Key": "detectorModelKey",
-        "RoleArn": "${role_arn}"
-      }
-    },
-    "lightSensor": {
-      "Type": "AWS::IoTEvents::Input",
-      "Properties": {
-        "InputName": "lightSensor",
-        "InputDescription": "light sensor input created by CloudFormation",
-        "InputDefinition": {
-          "Attributes": [
-            {
-              "JsonPath": "lightLevel"
-            }
-          ]
-        }
-      }
-    },
-    "proximitySensor": {
-      "Type": "AWS::IoTEvents::Input",
-      "Properties": {
-        "InputName": "proximitySensor",
-        "InputDescription": "proximity sensor input created by CloudFormation",
-        "InputDefinition": {
-          "Attributes": [
-            {
-              "JsonPath": "proximity"
-            }
-          ]
-        }
-      }
-    }
-  }
+	"Description": "Light Actuator Detector Model Template",
+	"Resources": {
+		"LightDetectorModel": {
+			"Type": "AWS::IoTEvents::DetectorModel",
+			"Properties": {
+				"DetectorModelDefinition": {
+					"States": [
+						{
+							"StateName": "light_off",
+							"OnInput": {
+								"Events": [
+									{
+										"EventName": "set_light_level",
+										"Condition": "$input.light_sensor.lightlevel != $variable.lightlevel",
+										"Actions": [
+											{
+												"SetVariable": {
+													"VariableName": "lightlevel",
+													"Value": "$input.light_sensor.lightlevel"
+												}
+											}
+										]
+									},
+									{
+										"EventName": "set_proximity",
+										"Condition": "$input.proximity_sensor.proximity != $variable.proximity",
+										"Actions": [
+											{
+												"SetVariable": {
+													"VariableName": "proximity",
+													"Value": "$input.proximity_sensor.proximity"
+												}
+											}
+										]
+									}
+								],
+								"TransitionEvents": [
+									{
+										"EventName": "on",
+										"Condition": "$variable.lightlevel < 400 && $variable.proximity >= 100",
+										"Actions": [],
+										"NextState": "light_on"
+									}
+								]
+							},
+							"OnEnter": {
+								"Events": [
+									{
+										"EventName": "turn_off_light",
+										"Condition": "true",
+										"Actions": [
+											{
+												"IotTopicPublish": {
+													"MqttTopic": "actuator/light"
+												}
+											}
+										]
+									}
+								]
+							},
+							"OnExit": {
+								"Events": []
+							}
+						},
+						{
+							"StateName": "light_on",
+							"OnInput": {
+								"Events": [
+									{
+										"EventName": "set_light_level",
+										"Condition": "$input.light_sensor.lightlevel != $variable.lightlevel",
+										"Actions": [
+											{
+												"SetVariable": {
+													"VariableName": "lightlevel",
+													"Value": "$input.light_sensor.lightlevel"
+												}
+											}
+										]
+									},
+									{
+										"EventName": "set_proximity",
+										"Condition": "$input.proximity_sensor.proximity != $variable.proximity",
+										"Actions": [
+											{
+												"SetVariable": {
+													"VariableName": "proximity",
+													"Value": "$input.proximity_sensor.proximity"
+												}
+											}
+										]
+									}
+								],
+								"TransitionEvents": [
+									{
+										"EventName": "off",
+										"Condition": "$variable.lightlevel >= 400 || $variable.proximity < 100",
+										"Actions": [],
+										"NextState": "light_off"
+									}
+								]
+							},
+							"OnEnter": {
+								"Events": [
+									{
+										"EventName": "turn_on_light",
+										"Condition": "true",
+										"Actions": [
+											{
+												"IotTopicPublish": {
+													"MqttTopic": "actuator/light"
+												}
+											}
+										]
+									}
+								]
+							},
+							"OnExit": {
+								"Events": []
+							}
+						}
+					],
+					"InitialStateName": "light_off"
+				},
+				"DetectorModelDescription": "Detector model representing the light actuator",
+				"DetectorModelName": "light_actuator_model",
+				"EvaluationMethod": "SERIAL",
+				"Key": "workplace",
+				"RoleArn": "${role_arn}"
+			}
+		},
+		"LightSensor": {
+			"Type": "AWS::IoTEvents::Input",
+			"Properties": {
+				"InputName": "light_sensor",
+				"InputDescription": "light sensor input created by CloudFormation",
+				"InputDefinition": {
+					"Attributes": [
+						{
+							"JsonPath": "lightlevel"
+						}
+					]
+				}
+			}
+		},
+		"ProximitySensor": {
+			"Type": "AWS::IoTEvents::Input",
+			"Properties": {
+				"InputName": "proximity_sensor",
+				"InputDescription": "proximity sensor input created by CloudFormation",
+				"InputDefinition": {
+					"Attributes": [
+						{
+							"JsonPath": "proximity"
+						}
+					]
+				}
+			}
+		}
+	}
 }
