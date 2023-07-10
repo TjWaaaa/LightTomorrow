@@ -3,11 +3,11 @@ locals {
 }
 
 module "light_rules" {
-  for_each = toset(local.light_rules)
-  source   = "./modules/iotrule"
-  iam_role = aws_iam_role.events_role
+  for_each     = toset(local.light_rules)
+  source       = "./modules/iotrule"
+  iam_role     = aws_iam_role.events_role
   detector_key = each.key
-  depends_on = [aws_cloudformation_stack.detector-model-stack]
+  depends_on   = [aws_cloudformation_stack.detector-model-stack]
 }
 
 resource "aws_iot_topic_rule" "proximity_rule" {
