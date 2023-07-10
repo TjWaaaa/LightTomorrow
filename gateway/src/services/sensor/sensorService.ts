@@ -18,11 +18,7 @@ export abstract class SensorService {
   abstract thingLabel: string;
   abstract payloadKey: string;
 
-  constructor(
-    protected iotee: Iotee,
-    protected mqttService: MqttService,
-    protected workplaces: string[]
-  ) {
+  constructor(protected iotee: Iotee, protected mqttService: MqttService) {
     this.mode = DEFAULT_MODE;
     this.currentValue = 0;
 
@@ -71,14 +67,12 @@ export abstract class SensorService {
 
     await this.updateDisplay();
 
-    this.workplaces.forEach((workplace) => {
-      const topic = "sensor/" + DEVICE_ID + "/" + workplace;
+    const topic = "topic/sensor/" + DEVICE_ID;
 
-      const message = JSON.stringify({
-        [this.payloadKey]: Math.floor(this.currentValue),
-      });
-      this.mqttService.publish(topic, message);
+    const message = JSON.stringify({
+      [this.payloadKey]: Math.floor(this.currentValue),
     });
+    this.mqttService.publish(topic, message);
 
     // This is better than setInterval because it will wait for the previous
     setTimeout(() => this.run(), INTERVAL);
