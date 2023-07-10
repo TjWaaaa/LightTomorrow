@@ -1,4 +1,4 @@
-resource "aws_iot_topic_rule" "lighlevel_rule" {
+resource "aws_iot_topic_rule" "lightlevel_rule" {
   name        = "lightlevel_rule"
   description = "rule for forwarding lightlevels to detector model"
   enabled     = true
@@ -8,12 +8,12 @@ resource "aws_iot_topic_rule" "lighlevel_rule" {
 
   iot_events {
     input_name = "light_sensor"
-    role_arn   = aws_iam_role.eventsRole.arn
+    role_arn   = aws_iam_role.events_role.arn
   }
 
   error_action {
     republish {
-      role_arn = aws_iam_role.eventsRole.arn
+      role_arn = aws_iam_role.events_role.arn
       topic    = "sensor/lightlevel/error"
     }
   }
@@ -29,12 +29,12 @@ resource "aws_iot_topic_rule" "proximity_rule" {
 
   iot_events {
     input_name = "proximity_sensor"
-    role_arn   = aws_iam_role.eventsRole.arn
+    role_arn   = aws_iam_role.events_role.arn
   }
 
   error_action {
     republish {
-      role_arn = aws_iam_role.eventsRole.arn
+      role_arn = aws_iam_role.events_role.arn
       topic    = "sensor/proximity/error"
     }
   }
@@ -70,12 +70,12 @@ resource "aws_iam_policy" "iot_events_policy" {
   })
 }
 
-resource "aws_iam_role" "eventsRole" {
-  name               = "eventsRole"
+resource "aws_iam_role" "events_role" {
+  name               = "events_role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_document.json
 }
 
 resource "aws_iam_role_policy_attachment" "my_policy_attachment" {
-  role       = aws_iam_role.eventsRole.name
+  role       = aws_iam_role.events_role.name
   policy_arn = aws_iam_policy.iot_events_policy.arn
 }
