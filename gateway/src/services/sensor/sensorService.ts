@@ -15,11 +15,13 @@ const DEVICE_ID = process.env.DEVICE_ID!;
 export abstract class SensorService {
   protected mode: SensorMode;
   protected currentValue: number;
+  protected isRunning: boolean;
   abstract thingLabel: string;
   abstract payloadKey: string;
 
   constructor(protected iotee: Iotee, protected mqttService: MqttService) {
     this.mode = DEFAULT_MODE;
+    this.isRunning = false;
     this.currentValue = 0;
 
     this.setup();
@@ -51,7 +53,7 @@ export abstract class SensorService {
       }
       await this.updateDisplay();
     });
-    this.run();
+    this.start();
   }
 
   async run() {
@@ -63,7 +65,10 @@ export abstract class SensorService {
       console.log("Error getting sensor value:", error);
     }
 
-    console.log("Current Value:", this.currentValue.toFixed(2));
+    console.log(
+      "Current Value:",
+      this.currentValue ? this.currentValue.toFixed(2) : ""
+    );
 
     await this.updateDisplay();
 
@@ -74,15 +79,16 @@ export abstract class SensorService {
     });
     this.mqttService.publish(topic, message);
 
-    // This is better than setInterval because it will wait for the previous
-    setTimeout(() => this.run(), INTERVAL);
+    if (this.isRunning) {
+      setTimeout(() => this.run(), INTERVAL);
+    }
   }
 
   private async updateDisplay() {
     const displayMessage =
       this.thingLabel +
       "\n" +
-      this.currentValue.toFixed(2) +
+      (this.currentValue ? this.currentValue.toFixed(2) : "") +
       "\n" +
       "Mode: " +
       this.mode +
@@ -96,6 +102,15 @@ export abstract class SensorService {
     } catch (error) {
       console.log("Display device failed", error);
     }
+  }
+
+  start() {
+    this.isRunning = true;
+    this.run();
+  }
+
+  stop() {
+    this.isRunning = false;
   }
 
   protected abstract getSensorValue(): Promise<number>;

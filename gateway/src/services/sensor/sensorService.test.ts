@@ -1,22 +1,16 @@
-import { SensorService } from "./sensorService";
-import { MqttService } from "../mqtt";
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
-import { SensorMode } from "../../interfaces";
+import { Mqtt, SensorMode } from "../../interfaces";
+import { MqttService } from "../mqtt";
+import { SensorService } from "./sensorService";
 
 jest.mock("@iotee/node-iotee");
 jest.mock("../mqtt");
 
 class MockSensorService extends SensorService {
+  thingLabel: string = "thing-label";
+  payloadKey: string = "payload-key";
   protected async getSensorValue(): Promise<number> {
     return 100;
-  }
-
-  protected getSensorType(): string {
-    return "mock-sensor";
-  }
-
-  protected getThingLabel(): string {
-    return "Mock Sensor:";
   }
 }
 
@@ -28,14 +22,18 @@ describe("SensorService", () => {
 
   beforeEach(() => {
     iotee = new Iotee("test");
-    mqttService = new MqttService({
+    const mqttConfig: Mqtt = {
       host: "test.com",
       port: 1234,
       caPath: "test",
       certPath: "test",
       keyPath: "test",
       clientId: "test",
-    });
+      errorCallback: function (error: Error): void {
+        console.log("Error callback");
+      },
+    };
+    mqttService = new MqttService(mqttConfig);
     buttonPressedCallback = jest.fn();
     (iotee.on as jest.Mock).mockImplementation(
       (event: ReceiveEvents, callback: (payload: string[]) => void) => {
@@ -53,14 +51,14 @@ describe("SensorService", () => {
 
   it("should initialize with default values", () => {
     expect(sensorService["mode"]).toBe(SensorMode.AUTO);
-    expect(sensorService["currentValue"]).toBe(0);
+    expect(sensorService["currentValue"]).toBe(100);
   });
 
   it("should switch mode from AUTO to MANUAL on button A press", async () => {
     const buttonAPayload = ["A"];
     sensorService["mode"] = SensorMode.AUTO;
 
-    buttonPressedCallback(buttonAPayload);
+    await buttonPressedCallback(buttonAPayload);
 
     expect(sensorService["mode"]).toBe(SensorMode.MANUAL);
   });
@@ -69,7 +67,7 @@ describe("SensorService", () => {
     const buttonAPayload = ["A"];
     sensorService["mode"] = SensorMode.MANUAL;
 
-    buttonPressedCallback(buttonAPayload);
+    await buttonPressedCallback(buttonAPayload);
 
     expect(sensorService["mode"]).toBe(SensorMode.AUTO);
   });
@@ -79,7 +77,7 @@ describe("SensorService", () => {
     sensorService["mode"] = SensorMode.MANUAL;
     const originalValue = sensorService["currentValue"];
 
-    buttonPressedCallback(buttonXPayload);
+    await buttonPressedCallback(buttonXPayload);
 
     expect(sensorService["currentValue"]).toBe(originalValue + 50);
   });
@@ -89,7 +87,7 @@ describe("SensorService", () => {
     sensorService["mode"] = SensorMode.MANUAL;
     const originalValue = sensorService["currentValue"];
 
-    buttonPressedCallback(buttonYPayload);
+    await buttonPressedCallback(buttonYPayload);
 
     expect(sensorService["currentValue"]).toBe(originalValue - 50);
   });
@@ -101,13 +99,13 @@ describe("SensorService", () => {
     await sensorService.run();
 
     expect(mockSetDisplay).toHaveBeenCalledWith(
-      "Mock Sensor:\n100.00\nMode: AUTO\nA: switch mode \nX: increase value \nY: decrease value"
+      "thing-label\n100.00\nMode: AUTO\nA: switch mode \nX: increase value \nY: decrease value"
     );
 
     expect(mockPublish).toHaveBeenCalledWith(
-      "thing/mock-sensor/undefined",
+      "topic/sensor/undefined",
       JSON.stringify({
-        sensorValue: "100.00",
+        "payload-key": 100,
       })
     );
   });

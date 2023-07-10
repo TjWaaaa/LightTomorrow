@@ -1,6 +1,7 @@
+import { Iotee } from "@iotee/node-iotee";
+import { Mqtt } from "../../interfaces";
 import { MqttService } from "../mqtt";
 import { LightSensorService } from "./lightSensorService";
-import { Iotee } from "@iotee/node-iotee";
 
 jest.mock("@iotee/node-iotee");
 
@@ -11,22 +12,27 @@ describe("LightSensorService", () => {
 
   beforeEach(() => {
     iotee = new Iotee("test");
-    mqttService = new MqttService({
+    const mqttConfig: Mqtt = {
       host: "test.com",
       port: 1234,
       caPath: "test",
       certPath: "test",
       keyPath: "test",
       clientId: "test",
-    });
+      errorCallback: function (error: Error): void {
+        console.log("Error callback");
+      },
+    };
+    mqttService = new MqttService(mqttConfig);
     lightSensorService = new LightSensorService(iotee, mqttService);
   });
 
   afterEach(() => {
     jest.resetAllMocks();
+    lightSensorService.stop();
   });
 
-  it("should return sensor value from getLight method", async () => {
+  it("should return sensor value from getSensorValue method", async () => {
     const lightValue = 50;
     jest.spyOn(iotee, "getLight").mockResolvedValue(lightValue);
 
@@ -35,14 +41,14 @@ describe("LightSensorService", () => {
     expect(result).toBe(lightValue);
   });
 
-  it("should return 'light-sensor' as the sensor type", () => {
-    const sensorType = lightSensorService["getSensorType"]();
+  it("should return 'lightLevel' as the payload key", () => {
+    const payloadKey = lightSensorService.payloadKey;
 
-    expect(sensorType).toBe("light-sensor");
+    expect(payloadKey).toBe("lightLevel");
   });
 
   it("should return 'Light Level:' as the thing label", () => {
-    const thingLabel = lightSensorService["getThingLabel"]();
+    const thingLabel = lightSensorService.thingLabel;
 
     expect(thingLabel).toBe("Light Level:");
   });

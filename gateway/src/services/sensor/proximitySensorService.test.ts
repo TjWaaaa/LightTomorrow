@@ -1,6 +1,7 @@
+import { Iotee } from "@iotee/node-iotee";
+import { Mqtt } from "../../interfaces";
 import { MqttService } from "../mqtt";
 import { ProximitySensorService } from "./proximitySensorService";
-import { Iotee } from "@iotee/node-iotee";
 
 jest.mock("@iotee/node-iotee");
 
@@ -11,22 +12,27 @@ describe("ProximitySensorService", () => {
 
   beforeEach(() => {
     iotee = new Iotee("test");
-    mqttService = new MqttService({
+    const mqttConfig: Mqtt = {
       host: "test.com",
       port: 1234,
       caPath: "test",
       certPath: "test",
       keyPath: "test",
       clientId: "test",
-    });
+      errorCallback: function (error: Error): void {
+        console.log("Error callback");
+      },
+    };
+    mqttService = new MqttService(mqttConfig);
     proximitySensorService = new ProximitySensorService(iotee, mqttService);
   });
 
   afterEach(() => {
     jest.resetAllMocks();
+    proximitySensorService.stop();
   });
 
-  it("should return sensor value from getProximity method", async () => {
+  it("should return sensor value from getSensorValue method", async () => {
     const proximityValue = 50;
     jest.spyOn(iotee, "getProximity").mockResolvedValue(proximityValue);
 
@@ -35,14 +41,14 @@ describe("ProximitySensorService", () => {
     expect(result).toBe(proximityValue);
   });
 
-  it("should return 'proximity-sensor' as the sensor type", () => {
-    const sensorType = proximitySensorService["getSensorType"]();
+  it("should return 'proximity' as the payload key", () => {
+    const sensorType = proximitySensorService.payloadKey;
 
-    expect(sensorType).toBe("proximity-sensor");
+    expect(sensorType).toBe("proximity");
   });
 
   it("should return 'Proximity Level:' as the thing label", () => {
-    const thingLabel = proximitySensorService["getThingLabel"]();
+    const thingLabel = proximitySensorService.thingLabel;
 
     expect(thingLabel).toBe("Proximity Level:");
   });

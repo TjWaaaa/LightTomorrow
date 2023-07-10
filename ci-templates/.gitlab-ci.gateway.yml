@@ -1,7 +1,3 @@
-cache:
-  paths:
-    - gateway/node_modules/
-
 stages:
   - build_gateway
 
