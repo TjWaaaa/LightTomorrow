@@ -5,7 +5,8 @@
   "main": "./src/main.ts",
   "scripts": {
     "start": "npx ts-node ./src/main.ts",
-    "test": "jest"
+    "build": "npx tsc --outDir build",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",

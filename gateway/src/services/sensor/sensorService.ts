@@ -1,10 +1,13 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
+import { config } from "dotenv";
 import { SensorMode } from "../../interfaces";
 import { MqttService } from "../mqtt";
 
-const DEFAULT_INTERVAL = 1000;
 const STEP_SIZE_MANUAL_MODE = 50;
 const DEFAULT_MODE = SensorMode.AUTO;
+const DEFAULT_INTERVAL = 1000;
+
+config();
 
 const INTERVAL = parseInt(process.env.SENSOR_INTERVAL!) || DEFAULT_INTERVAL;
 const DEVICE_ID = process.env.DEVICE_ID!;
@@ -12,6 +15,8 @@ const DEVICE_ID = process.env.DEVICE_ID!;
 export abstract class SensorService {
   protected mode: SensorMode;
   protected currentValue: number;
+  abstract thingLabel: string;
+  abstract payloadKey: string;
 
   constructor(protected iotee: Iotee, protected mqttService: MqttService) {
     this.mode = DEFAULT_MODE;
@@ -44,20 +49,38 @@ export abstract class SensorService {
           }
           break;
       }
+      await this.updateDisplay();
     });
-
-    setInterval(this.run.bind(this), INTERVAL);
+    this.run();
   }
 
   async run() {
-    if (this.mode === SensorMode.AUTO) {
-      this.currentValue = await this.getSensorValue();
+    try {
+      if (this.mode === SensorMode.AUTO) {
+        this.currentValue = await this.getSensorValue();
+      }
+    } catch (error) {
+      console.log("Error getting sensor value:", error);
     }
 
     console.log("Current Value:", this.currentValue.toFixed(2));
 
-    await this.iotee.setDisplay(
-      this.getThingLabel() +
+    await this.updateDisplay();
+
+    const topic = "topic/sensor/" + DEVICE_ID;
+
+    const message = JSON.stringify({
+      [this.payloadKey]: Math.floor(this.currentValue),
+    });
+    this.mqttService.publish(topic, message);
+
+    // This is better than setInterval because it will wait for the previous
+    setTimeout(() => this.run(), INTERVAL);
+  }
+
+  private async updateDisplay() {
+    const displayMessage =
+      this.thingLabel +
       "\n" +
       this.currentValue.toFixed(2) +
       "\n" +
@@ -66,18 +89,14 @@ export abstract class SensorService {
       "\n" +
       "A: switch mode \n" +
       "X: increase value \n" +
-      "Y: decrease value"
-    );
+      "Y: decrease value";
 
-    const topic = "thing/" + this.getSensorType() + "/" + DEVICE_ID;
-
-    const message = JSON.stringify({
-      sensorValue: this.currentValue.toFixed(2),
-    });
-    this.mqttService.publish(topic, message);
+    try {
+      await this.iotee.setDisplay(displayMessage);
+    } catch (error) {
+      console.log("Display device failed", error);
+    }
   }
 
   protected abstract getSensorValue(): Promise<number>;
-  protected abstract getSensorType(): string;
-  protected abstract getThingLabel(): string;
 }

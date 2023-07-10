@@ -5,9 +5,12 @@ export interface Mqtt {
   certPath: string;
   keyPath: string;
   clientId: string;
+  errorCallback: (error: Error) => void;
 }
 
 export enum SensorMode {
   AUTO = "AUTO",
   MANUAL = "MANUAL",
 }
+
+export type RGBAColor = [number, number, number, number];

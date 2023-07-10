@@ -1,0 +1,10 @@
+stages:
+  - build_gateway
+
+build_project:
+  image: node:20
+  stage: build_gateway
+  script:
+    - cd gateway
+    - npm ci
+    - npm run build
