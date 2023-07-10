@@ -1,4 +1,5 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
+import { MOCKED_DEVICE_ID } from "../../jestEnv";
 import { LightActuatorService } from "./actuatorService";
 import { MqttService } from "./mqtt";
 
@@ -79,14 +80,14 @@ describe("LightActuatorService", () => {
     );
     const mockGetLightPayloadOn = JSON.stringify({
       payload: {
-        detector: { keyValue: undefined },
+        detector: { keyValue: MOCKED_DEVICE_ID },
         state: { stateName: "LightOn" },
       },
     });
 
     const mockGetLightPayloadOff = JSON.stringify({
       payload: {
-        detector: { keyValue: undefined },
+        detector: { keyValue: MOCKED_DEVICE_ID },
         state: { stateName: "LightOff" },
       },
     });

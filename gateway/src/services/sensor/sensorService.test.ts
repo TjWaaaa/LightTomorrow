@@ -1,4 +1,5 @@
 import { Iotee, ReceiveEvents } from "@iotee/node-iotee";
+import { MOCKED_DEVICE_ID } from "../../../jestEnv";
 import { Mqtt, SensorMode } from "../../interfaces";
 import { MqttService } from "../mqtt";
 import { SensorService } from "./sensorService";
@@ -47,6 +48,7 @@ describe("SensorService", () => {
 
   afterEach(() => {
     jest.resetAllMocks();
+    sensorService.stop();
   });
 
   it("should initialize with default values", () => {
@@ -103,7 +105,7 @@ describe("SensorService", () => {
     );
 
     expect(mockPublish).toHaveBeenCalledWith(
-      "topic/sensor/undefined",
+      `topic/sensor/${MOCKED_DEVICE_ID}`,
       JSON.stringify({
         "payload-key": 100,
       })
