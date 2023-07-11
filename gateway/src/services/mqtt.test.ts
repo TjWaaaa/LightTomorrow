@@ -52,6 +52,40 @@ describe("MqttService", () => {
       // Assert
       expect(mqtt.connect).toHaveBeenCalled();
     });
+
+    it("should handle connection error properly", async () => {
+      // Arrange
+      let mqttClientMock = {
+        on: jest.fn(),
+        publish: jest.fn(),
+        subscribe: jest.fn(),
+        end: jest.fn(),
+      };
+      const error = new Error("Connection error");
+      mqttClientMock.on.mockImplementation((event, callback) => {
+        if (event === "error") {
+          callback(error);
+        }
+        return mqttClientMock;
+      });
+      (mqtt.connect as jest.Mock).mockReturnValue(mqttClientMock);
+
+      // Act
+      let err;
+      try {
+        await mqttService.connect();
+      } catch (e) {
+        err = e;
+      }
+
+      // Assert
+      expect(err).toBe(error);
+      expect(mqttClientMock.on).toHaveBeenCalledWith(
+        "error",
+        expect.any(Function)
+      );
+      expect(MQTT_CONFIG.errorCallback).toHaveBeenCalledWith(error);
+    });
   });
 
   describe("publish", () => {

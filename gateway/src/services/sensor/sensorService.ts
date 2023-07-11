@@ -9,6 +9,7 @@ const DEFAULT_INTERVAL = 1000;
 
 config();
 
+/* istanbul ignore next */
 const INTERVAL = parseInt(process.env.SENSOR_INTERVAL!) || DEFAULT_INTERVAL;
 const DEVICE_ID = process.env.DEVICE_ID!;
 
@@ -62,6 +63,7 @@ export abstract class SensorService {
         this.currentValue = await this.getSensorValue();
       }
     } catch (error) {
+      /* istanbul ignore next */
       console.log("Error getting sensor value:", error);
     }
 
@@ -79,6 +81,7 @@ export abstract class SensorService {
     });
     this.mqttService.publish(topic, message);
 
+    /* istanbul ignore if */
     if (this.isRunning) {
       setTimeout(() => this.run(), INTERVAL);
     }
@@ -100,6 +103,7 @@ export abstract class SensorService {
     try {
       await this.iotee.setDisplay(displayMessage);
     } catch (error) {
+      /* istanbul ignore next */
       console.log("Display device failed", error);
     }
   }

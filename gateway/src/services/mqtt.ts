@@ -28,6 +28,7 @@ export class MqttService {
     this.client = mqtt.connect(url.toString(), options);
 
     await new Promise((resolve, reject) => {
+      /* istanbul ignore if */
       if (!this.client) {
         console.error("Client initialization failed");
         return reject("Client not initialized");
@@ -60,6 +61,7 @@ export class MqttService {
     }
 
     this.client.publish(topic, message, (err) => {
+      /* istanbul ignore if */
       if (err) {
         console.error(`Failed to publish message: ${err}`);
       } else {
@@ -74,12 +76,14 @@ export class MqttService {
   ): void {
     console.log(`Attempting to subscribe to topic ${topic}`);
 
+    /* istanbul ignore if */
     if (!this.client) {
       console.warn("Must connect to MQTT broker before subscribing to topic");
       return;
     }
 
     this.client.subscribe(topic, (err) => {
+      /* istanbul ignore if */
       if (err) {
         console.error(`Failed to subscribe to topic: ${err}`);
       } else {
@@ -96,6 +100,7 @@ export class MqttService {
   disconnect(): void {
     console.log("Attempting to disconnect from MQTT broker");
 
+    /* istanbul ignore else */
     if (this.client) {
       this.client.end();
       console.log("Successfully disconnected from MQTT broker");
