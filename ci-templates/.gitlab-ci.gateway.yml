@@ -9,11 +9,14 @@ test_gateway:
     - cd gateway
     - npm ci
     - npm run test
+  artifacts:
+    paths:
+      - ./gateway/node_modules
+    expire_in: 1h
 
 build_gateway:
   image: node:20
   stage: build
   script:
     - cd gateway
-    - npm ci
     - npm run build
