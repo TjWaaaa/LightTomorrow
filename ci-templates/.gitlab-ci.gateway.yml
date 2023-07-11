@@ -1,9 +1,18 @@
 stages:
-  - build_gateway
+  - test
+  - build
 
-build_project:
+test_gateway:
   image: node:20
-  stage: build_gateway
+  stage: test
+  script:
+    - cd gateway
+    - npm ci
+    - npm run test
+
+build_gateway:
+  image: node:20
+  stage: build
   script:
     - cd gateway
     - npm ci
