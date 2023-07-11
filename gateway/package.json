@@ -6,8 +6,8 @@
   "scripts": {
     "start": "npx ts-node ./src/main.ts",
     "build": "npx tsc --outDir build",
-    "test": "jest",
-    "test:watch": "jest --watchAll"
+    "test": "jest --silent",
+    "test:watch": "jest --silent --watchAll"
   },
   "author": "",
   "license": "ISC",
