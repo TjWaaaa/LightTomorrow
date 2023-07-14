@@ -2,7 +2,7 @@ stages:
   - test
   - build
 
-test_gateway:
+test-gateway:
   image: node:20
   stage: test
   script:
@@ -14,7 +14,7 @@ test_gateway:
       - ./gateway/node_modules
     expire_in: 1h
 
-build_gateway:
+build-gateway:
   image: node:20
   stage: build
   script:
