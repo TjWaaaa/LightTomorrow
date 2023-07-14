@@ -1,7 +1,3 @@
-stages:
-  - test
-  - build
-
 test-gateway:
   image: node:20
   stage: test

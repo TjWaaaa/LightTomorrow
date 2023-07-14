@@ -1,3 +1,10 @@
 include:
   - local: "/ci-templates/.gitlab-ci.terraform.yml"
   - local: "/ci-templates/.gitlab-ci.gateway.yml"
+
+stages:
+  - validate
+  - test
+  - build
+  - deploy
+  - cleanup
