@@ -16,3 +16,9 @@ build-gateway:
   script:
     - cd gateway
     - npm run build
+    - mkdir ../packages
+    - mv ./build ../packages/build
+  artifacts:
+    paths:
+      - ./packages
+    expire_in: 1h
