@@ -42,7 +42,11 @@ terraform apply
 Explain Dev Progress and Solutions
 
 ## Architecture Diagram
-![Alt text](./files/architectureDiagram.png)
+![Architecture Diagram](./files/architectureDiagram.png)
+
+## Detector Model Business Logic
+
+![Detector Model Business Logic](./files/detectorModel.png)
 
 ## Learnings
 - Some Services require delay in setup
