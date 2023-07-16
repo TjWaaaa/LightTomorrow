@@ -52,7 +52,7 @@ terraform COMMAND
 
 Explain Dev Progress and Solutions
 
-## Architecture Diagram
+## Architecture & Data flow Diagram
 
 ![Architecture Diagram](./files/diagramArchitecture.png)
 
