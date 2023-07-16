@@ -1,21 +1,27 @@
 ## Gateway
 
-1. Setup env
+1. Get Deploy:Archive Artifact from Pipeline
+
+2. Insert Packages from Deploy:Archive into project folder
+
+3. Choose thing Package and copy .env of thing to gateway .env
 
 ```sh
-cp example.env .env
+cp ./packages/<wanted-thing>/.env ./gateway/.env
 ```
 
-2. Install dependencies
+4. Insert Device URL of your thing in .env
+
+5. Install dependencies
 
 ```sh
 npm i
 ```
 
-3. Run gateway software
+6. Run gateway software
 
 ```sh
-npm start
+npm run start
 ```
 
 ### Testing
