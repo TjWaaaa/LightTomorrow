@@ -5,7 +5,7 @@
   "main": "./src/main.ts",
   "scripts": {
     "start": "npx ts-node ./src/main.ts",
-    "build": "npx tsc --outDir build",
+    "build": "npx tsc --project tsconfig.build.json",
     "test": "jest --silent",
     "test:watch": "jest --silent --watchAll"
   },
