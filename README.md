@@ -20,33 +20,23 @@ The core feature of LightTomorrow is a proximity sensor that triggers the desk l
 - Marvin Pfau (mp159)
 - Timo Waldherr (tw086)
 
-## Getting Started / Setup Instructions
+## Software Parts
 
-#### 1. Setup Terraform
+### Infrastructure for Backend
 
-```sh
-export GITLAB_ACCESS_TOKEN=
-terraform init \
-    -backend-config="address=https://gitlab.mi.hdm-stuttgart.de/api/v4/projects/9068/terraform/state/default" \
-    -backend-config="lock_address=https://gitlab.mi.hdm-stuttgart.de/api/v4/projects/9068/terraform/state/default/lock" \
-    -backend-config="unlock_address=https://gitlab.mi.hdm-stuttgart.de/api/v4/projects/9068/terraform/state/default/lock" \
-    -backend-config="username=mc071" \
-    -backend-config="password=$GITLAB_ACCESS_TOKEN" \
-    -backend-config="lock_method=POST" \
-    -backend-config="unlock_method=DELETE" \
-    -backend-config="retry_wait_min=5"
-```
+- AWS to build software backend: AWS Iot Core, AWS Iot Events (No Lambda)
+- Logic of actuators built with Detector Model (AWS Iot Events)
+- Terraform using GitLab Backend to save state
 
-#### 2. Run terraform COMMAND
+[Getting started](./infrastructure/README.md)
 
-Repalce `COMMAND` with the terraform command you would like to run e.g.: `plan` or `apply`
+### Gateway
 
-```sh
-export AWS_ACCESS_KEY_ID=
-export AWS_DEFAULT_REGION=
-export AWS_SECRET_ACCESS_KEY=
-terraform COMMAND
-```
+- TypeScript Node Software for all required things
+- 100% code coverage
+- Testing and packing in CI
+
+[Getting started](./gateway/README.md)
 
 ## Developing Progress
 

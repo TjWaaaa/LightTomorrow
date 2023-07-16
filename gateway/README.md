@@ -1,4 +1,4 @@
-## Gateway Software Quickstart
+## Gateway
 
 1. Setup env
 
@@ -19,6 +19,8 @@ npm start
 ```
 
 ### Testing
+
+The gateway software is tested using `jest`.
 
 ```
 ----------------------------|---------|----------|---------|---------|-------------------
