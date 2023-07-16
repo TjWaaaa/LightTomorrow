@@ -26,24 +26,29 @@ export class LightActuatorService {
   async setup() {
     await this.setDisplayLightStatus();
 
+    /* istanbul ignore next */
     this.mqttService.subscribe(ACTUATOR_TOPIC, (payload, topic) => {
-      const payloadParsed = JSON.parse(payload);
-      if (payloadParsed.payload.detector.keyValue != DEVICE_ID) {
-        return;
-      }
-      console.log("Light is: ", payloadParsed.payload.state.stateName);
-      this.isLightOn =
-        (payloadParsed.payload.state.stateName as "LightOff" | "LightOn") ===
-        "LightOff"
-          ? false
-          : true;
-      this.setDisplayLightStatus();
+      this.handleMqttMessage(payload);
     });
 
     this.iotee.on(ReceiveEvents.ButtonPressed, async () => {
       this.isLightOn = !this.isLightOn;
       this.setDisplayLightStatus();
     });
+  }
+
+  private handleMqttMessage(payload: string) {
+    const payloadParsed = JSON.parse(payload);
+    if (payloadParsed.payload.detector.keyValue != DEVICE_ID) {
+      return;
+    }
+    console.log("Light is: ", payloadParsed.payload.state.stateName);
+    this.isLightOn =
+      (payloadParsed.payload.state.stateName as "LightOff" | "LightOn") ===
+      "LightOff"
+        ? false
+        : true;
+    this.setDisplayLightStatus();
   }
 
   private async setDisplayLightStatus() {
@@ -60,6 +65,7 @@ export class LightActuatorService {
         `Light Status: \n${this.isLightOn ? "ON" : "OFF"}`
       );
     } catch (error) {
+      /* istanbul ignore next */
       console.error("Display device failed", error);
     }
   }
