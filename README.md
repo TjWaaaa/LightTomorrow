@@ -63,11 +63,7 @@ Explain Dev Progress and Solutions
 ## Learnings
 
 - Some Services require delay in setup
-
 - Challenging Docs
-
 - Limited StackOverflow responses
-
 - Long deletion time
-
 - Vast number of services
