@@ -1,13 +1,6 @@
 include:
   - template: Terraform.latest.gitlab-ci.yml
 
-stages:
-  - validate
-  - test
-  - build
-  - deploy
-  - cleanup
-
 deploy:
   extends: .terraform:deploy
   artifacts:

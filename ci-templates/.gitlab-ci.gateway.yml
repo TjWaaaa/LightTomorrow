@@ -1,10 +1,24 @@
-stages:
-  - build_gateway
-
-build_project:
+test-gateway:
   image: node:20
-  stage: build_gateway
+  stage: test
   script:
     - cd gateway
     - npm ci
+    - npm run test
+  artifacts:
+    paths:
+      - ./gateway/node_modules
+    expire_in: 1h
+
+build-gateway:
+  image: node:20
+  stage: build
+  script:
+    - cd gateway
     - npm run build
+    - mkdir ../packages
+    - mv ./build ../packages/build
+  artifacts:
+    paths:
+      - ./packages
+    expire_in: 1h
