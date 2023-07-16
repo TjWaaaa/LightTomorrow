@@ -40,8 +40,6 @@ The core feature of LightTomorrow is a proximity sensor that triggers the desk l
 
 ## Developing Progress
 
-Explain Dev Progress and Solutions
-
 ## Architecture & Data flow Diagram
 
 ![Architecture Diagram](./files/diagramArchitecture.png)
@@ -52,8 +50,8 @@ Explain Dev Progress and Solutions
 
 ## Learnings
 
-- Some Services require delay in setup
-- Challenging Docs
-- Limited StackOverflow responses
-- Long deletion time
-- Vast number of services
+- When to use cloud services / Use cases for cloud services
+- Thinking in cloud services + which services are available + concepts of services
+- What Infrastructure as code is + benefits of using it (we love it!)
+- Basics of Iot devices (MQTT, problems)
+- Details about the AWS IoT Core and AWS IoT Events
