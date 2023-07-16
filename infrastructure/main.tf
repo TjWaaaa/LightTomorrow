@@ -25,8 +25,8 @@ resource "aws_iam_policy" "iot_events_cloud_formation_policy" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Principal: {
-      "AWS": "689988310164"
+    Principal : {
+      "AWS" : "689988310164"
     }
     Statement = [
       {
