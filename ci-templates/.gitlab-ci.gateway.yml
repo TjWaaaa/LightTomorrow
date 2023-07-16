@@ -21,4 +21,4 @@ build-gateway:
   artifacts:
     paths:
       - ./packages
-    expire_in: 1h
+    expire_in: 4 weeks

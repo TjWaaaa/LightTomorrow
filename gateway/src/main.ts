@@ -23,7 +23,6 @@ const deviceType = {
 const main = async () => {
   console.log("Trying to connect to device on port: ", process.env.DEVICE_URL);
   const iotee = new Iotee(process.env.DEVICE_URL!);
-  console.log("✅ Device connected");
 
   iotee.setLogLevel(LogLevel.WARN);
   await iotee.connect();
