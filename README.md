@@ -55,3 +55,10 @@ The core feature of LightTomorrow is a proximity sensor that triggers the desk l
 - What Infrastructure as code is + benefits of using it (we love it!)
 - Basics of Iot devices (MQTT, problems)
 - Details about the AWS IoT Core and AWS IoT Events
+
+## Repo structure
+
+- `ci-templates`: Our CI templates for terraform (fmt, test, plan, apply) and the gatway software (test, build)
+- `files`: Presentation files and screenshots
+- `gateway`: Gateway Software in TypeScript for Things (Sensors & Actuators)
+- `infrastructure`: Terraform configuration for our AWS Backend
