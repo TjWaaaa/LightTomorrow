@@ -14,7 +14,7 @@ resource "aws_iot_topic_rule" "proximity_rule" {
   name        = "proximity_rule"
   description = "rule for forwarding proximity to detector model"
   enabled     = true
-  sql         = "SELECT *, topic(2) as sensor_id, topic(3) as workplace FROM 'topic/sensor/+/#'"
+  sql         = "SELECT *, topic(3) as sensor_id, topic(4) as workplace FROM 'topic/sensor/+/#'"
   sql_version = "2016-03-23"
   depends_on  = [aws_cloudformation_stack.detector-model-stack]
 
