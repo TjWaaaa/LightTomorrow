@@ -25,6 +25,9 @@ resource "aws_iam_policy" "iot_events_cloud_formation_policy" {
 
   policy = jsonencode({
     Version = "2012-10-17"
+    Principal : {
+      "AWS" : "689988310164"
+    }
     Statement = [
       {
         Action = [
@@ -57,42 +60,24 @@ resource "time_sleep" "wait_30_seconds" {
 }
 
 resource "aws_cloudformation_stack" "detector-model-stack" {
-  name          = "detector-model-stack"
-  template_body = templatefile("${path.module}/detectormodel/LightActuator.json", { role_arn = aws_iam_role.iotevents_access.arn })
-  depends_on    = [time_sleep.wait_30_seconds]
+  name              = "detector-model-stack"
+  template_body     = templatefile("${path.module}/detectormodel/LightActuator.json", { role_arn = aws_iam_role.iotevents_access.arn })
+  depends_on        = [time_sleep.wait_30_seconds]
+  notification_arns = []
 }
-# TODO: remove comments
-
-# resource "aws_iot_thing_type" "sensor" {
-#   name = "Sensor"
-
-#   properties {
-#     description = "Used for the proximity- and light sensor."
-#   }
-# }
-
-# resource "aws_iot_thing_type" "actuator" {
-#   name = "Actuator"
-
-#   properties {
-#     description = "Used for the workplace light actuators."
-#   }
-# }
 
 module "sensors" {
   for_each = toset(local.sensors)
   source   = "./modules/thing"
   name     = "sensor_${each.key}"
-  #   thing_type = aws_iot_thing_type.sensor
-  policy = aws_iot_policy.thing_policy
+  policy   = aws_iot_policy.thing_policy
 }
 
 module "actuators" {
   for_each = toset(local.actuators)
   source   = "./modules/thing"
   name     = "actuator_${each.key}"
-  #   thing_type = aws_iot_thing_type.actuator
-  policy = aws_iot_policy.thing_policy
+  policy   = aws_iot_policy.thing_policy
 }
 
 data "aws_iam_policy_document" "thing_policy_doc" {

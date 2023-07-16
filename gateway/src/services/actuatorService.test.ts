@@ -81,14 +81,14 @@ describe("LightActuatorService", () => {
     const mockGetLightPayloadOn = JSON.stringify({
       payload: {
         detector: { keyValue: MOCKED_DEVICE_ID },
-        state: { stateName: "LightOn" },
+        state: { stateName: "light_on" },
       },
     });
 
     const mockGetLightPayloadOff = JSON.stringify({
       payload: {
         detector: { keyValue: MOCKED_DEVICE_ID },
-        state: { stateName: "LightOff" },
+        state: { stateName: "light_off" },
       },
     });
 
@@ -111,7 +111,7 @@ describe("LightActuatorService", () => {
     const mockGetLightPayloadOn = JSON.stringify({
       payload: {
         detector: { keyValue: "banana" },
-        state: { stateName: "LightOn" },
+        state: { stateName: "light_on" },
       },
     });
 

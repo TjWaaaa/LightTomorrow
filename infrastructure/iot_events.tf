@@ -1,83 +1,32 @@
-resource "aws_iot_topic_rule" "lighLevelRule01" {
-  name        = "lightLevelRule01"
-  description = "rule for forwarding lightlevels to thing_actuator_light_workplace_1"
-  enabled     = true
-  sql         = "SELECT *, 'thing_actuator_light_workplace_1' as detectorModelKey FROM 'topic/sensor/thing_sensor_light_outside'"
-  sql_version = "2016-03-23"
-  depends_on  = [aws_cloudformation_stack.detector-model-stack]
-
-  iot_events {
-    input_name = "lightSensor"
-    role_arn   = aws_iam_role.eventsRole.arn
-  }
-
-  error_action {
-    republish {
-      role_arn = aws_iam_role.eventsRole.arn
-      topic    = "topic/error"
-    }
-  }
+locals {
+  light_rules = ["lightlevel_rule_01", "lightlevel_rule_02"]
 }
 
-resource "aws_iot_topic_rule" "lighLevelRule02" {
-  name        = "lightLevelRule02"
-  description = "rule for forwarding lightlevels to thing_actuator_light_workplace_2"
-  enabled     = true
-  sql         = "SELECT *, 'thing_actuator_light_workplace_2' as detectorModelKey FROM 'topic/sensor/thing_sensor_light_outside'"
-  sql_version = "2016-03-23"
-  depends_on  = [aws_cloudformation_stack.detector-model-stack]
-
-  iot_events {
-    input_name = "lightSensor"
-    role_arn   = aws_iam_role.eventsRole.arn
-  }
-
-  error_action {
-    republish {
-      role_arn = aws_iam_role.eventsRole.arn
-      topic    = "topic/error"
-    }
-  }
+module "light_rules" {
+  for_each     = toset(local.light_rules)
+  source       = "./modules/iotrule"
+  iam_role     = aws_iam_role.events_role
+  detector_key = each.key
+  depends_on   = [aws_cloudformation_stack.detector-model-stack]
 }
 
-resource "aws_iot_topic_rule" "proximityRule01" {
-  name        = "proximityRule01"
-  description = "rule for forwarding proximity to thing_actuator_light_workplace_1"
+resource "aws_iot_topic_rule" "proximity_rule" {
+  name        = "proximity_rule"
+  description = "rule for forwarding proximity to detector model"
   enabled     = true
-  sql         = "SELECT *, 'thing_actuator_light_workplace_1' as detectorModelKey FROM 'topic/sensor/thing_sensor_proximity_workplace_1'"
+  sql         = "SELECT *, topic(3) as sensor_id, topic(4) as workplace FROM 'topic/sensor/+/#'"
   sql_version = "2016-03-23"
   depends_on  = [aws_cloudformation_stack.detector-model-stack]
 
   iot_events {
-    input_name = "proximitySensor"
-    role_arn   = aws_iam_role.eventsRole.arn
+    input_name = "proximity_sensor"
+    role_arn   = aws_iam_role.events_role.arn
   }
 
   error_action {
     republish {
-      role_arn = aws_iam_role.eventsRole.arn
-      topic    = "topic/error"
-    }
-  }
-}
-
-resource "aws_iot_topic_rule" "proximityRule02" {
-  name        = "proximityRule02"
-  description = "rule for forwarding proximity to thing_actuator_light_workplace_2"
-  enabled     = true
-  sql         = "SELECT *, 'thing_actuator_light_workplace_2' as detectorModelKey FROM 'topic/sensor/thing_sensor_proximity_workplace_2'"
-  sql_version = "2016-03-23"
-  depends_on  = [aws_cloudformation_stack.detector-model-stack]
-
-  iot_events {
-    input_name = "proximitySensor"
-    role_arn   = aws_iam_role.eventsRole.arn
-  }
-
-  error_action {
-    republish {
-      role_arn = aws_iam_role.eventsRole.arn
-      topic    = "topic/error"
+      role_arn = aws_iam_role.events_role.arn
+      topic    = "sensor/proximity/error"
     }
   }
 }
@@ -112,12 +61,12 @@ resource "aws_iam_policy" "iot_events_policy" {
   })
 }
 
-resource "aws_iam_role" "eventsRole" {
-  name               = "eventsRole"
+resource "aws_iam_role" "events_role" {
+  name               = "events_role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_document.json
 }
 
 resource "aws_iam_role_policy_attachment" "my_policy_attachment" {
-  role       = aws_iam_role.eventsRole.name
+  role       = aws_iam_role.events_role.name
   policy_arn = aws_iam_policy.iot_events_policy.arn
 }

@@ -7,29 +7,29 @@
         "DetectorModelDefinition": {
           "States": [
             {
-              "StateName": "LightOff",
+              "StateName": "light_off",
               "OnInput": {
                 "Events": [
                   {
-                    "EventName": "setLightLevel",
-                    "Condition": "$input.lightSensor.lightLevel != $variable.lightLevel",
+                    "EventName": "set_light_level",
+                    "Condition": "$input.light_sensor.lightlevel != $variable.lightlevel",
                     "Actions": [
                       {
                         "SetVariable": {
-                          "VariableName": "lightLevel",
-                          "Value": "$input.lightSensor.lightLevel"
+                          "VariableName": "lightlevel",
+                          "Value": "$input.light_sensor.lightlevel"
                         }
                       }
                     ]
                   },
                   {
-                    "EventName": "setProximity",
-                    "Condition": "$input.proximitySensor.proximity != $variable.proximity",
+                    "EventName": "set_proximity",
+                    "Condition": "$input.proximity_sensor.proximity != $variable.proximity",
                     "Actions": [
                       {
                         "SetVariable": {
                           "VariableName": "proximity",
-                          "Value": "$input.proximitySensor.proximity"
+                          "Value": "$input.proximity_sensor.proximity"
                         }
                       }
                     ]
@@ -37,17 +37,17 @@
                 ],
                 "TransitionEvents": [
                   {
-                    "EventName": "Out",
-                    "Condition": "$variable.lightLevel < 400 && $variable.proximity >= 100",
+                    "EventName": "on",
+                    "Condition": "$variable.lightlevel < 400 && $variable.proximity >= 100",
                     "Actions": [],
-                    "NextState": "LightOn"
+                    "NextState": "light_on"
                   }
                 ]
               },
               "OnEnter": {
                 "Events": [
                   {
-                    "EventName": "TurnOffLight",
+                    "EventName": "turn_off_light",
                     "Condition": "true",
                     "Actions": [
                       {
@@ -64,29 +64,29 @@
               }
             },
             {
-              "StateName": "LightOn",
+              "StateName": "light_on",
               "OnInput": {
                 "Events": [
                   {
-                    "EventName": "setLightLevel",
-                    "Condition": "$input.lightSensor.lightLevel != $variable.lightLevel",
+                    "EventName": "set_light_level",
+                    "Condition": "$input.light_sensor.lightlevel != $variable.lightlevel",
                     "Actions": [
                       {
                         "SetVariable": {
-                          "VariableName": "lightLevel",
-                          "Value": "$input.lightSensor.lightLevel"
+                          "VariableName": "lightlevel",
+                          "Value": "$input.light_sensor.lightlevel"
                         }
                       }
                     ]
                   },
                   {
-                    "EventName": "setProximity",
-                    "Condition": "$input.proximitySensor.proximity != $variable.proximity",
+                    "EventName": "set_proximity",
+                    "Condition": "$input.proximity_sensor.proximity != $variable.proximity",
                     "Actions": [
                       {
                         "SetVariable": {
                           "VariableName": "proximity",
-                          "Value": "$input.proximitySensor.proximity"
+                          "Value": "$input.proximity_sensor.proximity"
                         }
                       }
                     ]
@@ -94,17 +94,17 @@
                 ],
                 "TransitionEvents": [
                   {
-                    "EventName": "In",
-                    "Condition": "$variable.lightLevel >= 400 || $variable.proximity < 100",
+                    "EventName": "off",
+                    "Condition": "$variable.lightlevel >= 400 || $variable.proximity < 100",
                     "Actions": [],
-                    "NextState": "LightOff"
+                    "NextState": "light_off"
                   }
                 ]
               },
               "OnEnter": {
                 "Events": [
                   {
-                    "EventName": "TurnOnLight",
+                    "EventName": "turn_on_light",
                     "Condition": "true",
                     "Actions": [
                       {
@@ -121,33 +121,33 @@
               }
             }
           ],
-          "InitialStateName": "LightOff"
+          "InitialStateName": "light_off"
         },
         "DetectorModelDescription": "Detector model representing the light actuator",
-        "DetectorModelName": "LightActuatorModel",
+        "DetectorModelName": "light_actuator_model",
         "EvaluationMethod": "SERIAL",
-        "Key": "detectorModelKey",
+        "Key": "workplace",
         "RoleArn": "${role_arn}"
       }
     },
-    "lightSensor": {
+    "LightSensor": {
       "Type": "AWS::IoTEvents::Input",
       "Properties": {
-        "InputName": "lightSensor",
+        "InputName": "light_sensor",
         "InputDescription": "light sensor input created by CloudFormation",
         "InputDefinition": {
           "Attributes": [
             {
-              "JsonPath": "lightLevel"
+              "JsonPath": "lightlevel"
             }
           ]
         }
       }
     },
-    "proximitySensor": {
+    "ProximitySensor": {
       "Type": "AWS::IoTEvents::Input",
       "Properties": {
-        "InputName": "proximitySensor",
+        "InputName": "proximity_sensor",
         "InputDescription": "proximity sensor input created by CloudFormation",
         "InputDefinition": {
           "Attributes": [

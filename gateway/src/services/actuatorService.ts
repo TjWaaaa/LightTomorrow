@@ -39,13 +39,13 @@ export class LightActuatorService {
 
   private handleMqttMessage(payload: string) {
     const payloadParsed = JSON.parse(payload);
-    if (payloadParsed.payload.detector.keyValue != DEVICE_ID) {
+    if (!DEVICE_ID.includes(payloadParsed.payload.detector.keyValue)) {
       return;
     }
     console.log("Light is: ", payloadParsed.payload.state.stateName);
     this.isLightOn =
-      (payloadParsed.payload.state.stateName as "LightOff" | "LightOn") ===
-      "LightOff"
+      (payloadParsed.payload.state.stateName as "light_off" | "light_on") ===
+      "light_off"
         ? false
         : true;
     this.setDisplayLightStatus();

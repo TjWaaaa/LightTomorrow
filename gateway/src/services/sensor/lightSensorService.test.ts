@@ -41,10 +41,10 @@ describe("LightSensorService", () => {
     expect(result).toBe(lightValue);
   });
 
-  it("should return 'lightLevel' as the payload key", () => {
+  it("should return 'lightlevel' as the payload key", () => {
     const payloadKey = lightSensorService.payloadKey;
 
-    expect(payloadKey).toBe("lightLevel");
+    expect(payloadKey).toBe("lightlevel");
   });
 
   it("should return 'Light Level:' as the thing label", () => {
