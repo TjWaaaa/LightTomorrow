@@ -62,3 +62,5 @@ The core feature of LightTomorrow is a proximity sensor that triggers the desk l
 - `files`: Presentation files and screenshots
 - `gateway`: Gateway Software in TypeScript for Things (Sensors & Actuators)
 - `infrastructure`: Terraform configuration for our AWS Backend
+
+![Footer :D](./files/footer.png)
